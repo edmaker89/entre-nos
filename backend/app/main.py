@@ -1,3 +1,4 @@
+from app.api.month_closure import router as closure_router
 from app.api.months import router as months_router
 from app.api.advance_changes import router as advance_changes_router
 from app.api.advances import router as advances_router
@@ -75,3 +76,5 @@ app.include_router(advances_router)
 app.include_router(advance_changes_router)
 
 app.include_router(months_router)
+
+app.include_router(closure_router)

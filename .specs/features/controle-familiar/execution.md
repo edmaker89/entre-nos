@@ -329,3 +329,19 @@ Gate: 40 testes passaram; totais mensais, filtros e previsão de 12 meses.
 | backend/tests/integration/test_months.py:45 — `assert forecast[-1]["month"] == "2027-09"` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T20
+
+Gate: 41 testes passaram; mês quitado exige pagamentos e invalida com pendências.
+- **Requirement**: MONTH-01 AC08.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/integration/test_month_closure.py:8 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_month_closure.py:19 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_month_closure.py:25 — `assert c["installments"][0]["paid_at"] is None` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_month_closure.py:32 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_month_closure.py:38 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_month_closure.py:46 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
