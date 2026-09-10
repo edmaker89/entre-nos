@@ -309,3 +309,23 @@ Gate: 14 testes unitários passaram; regra do dia 10 e timezone.
 | backend/tests/unit/test_month_selection.py:13 — `assert default_month(datetime(2026, 12, 10, 12, tzinfo=timezone.utc), False) == "2027-01"` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T19
+
+Gate: 40 testes passaram; totais mensais, filtros e previsão de 12 meses.
+- **Requirement**: MONTH-01 AC02–03,AC05–07; ADV-01 AC01–04.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/integration/test_months.py:22 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_months.py:31 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_months.py:32 — `assert r.json()["totals"] == {"expected": 15000, "paid": 10000, "remaining": 5000}` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_months.py:34 — `assert r.json()["totals"] == {"expected": 5000, "paid": 0, "remaining": 5000}` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_months.py:35 — `assert len(r.json()["items"]) == 1` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_months.py:36 — `assert r.json()["family_total"] == 15000` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_months.py:37 — `assert client.get("/api/v1/months/2026-11").json()["totals"] == {` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_months.py:43 — `assert len(forecast) == 12` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_months.py:44 — `assert forecast[0]["totals"]["expected"] == 15000` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_months.py:45 — `assert forecast[-1]["month"] == "2027-09"` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
