@@ -45,10 +45,11 @@
 ## Handoff
 
 - **Feature**: controle-familiar — .specs/features/controle-familiar/
-- **Phase / Task**: Tasks; 28 tarefas propostas em quatro fases.
-- **Completed**: Specify e Design aprovados; AD-005 registra sessão por cookie; tasks.md contém matriz e validações estruturais.
-- **In-progress**: Confirmar ferramentas/testes e oferecer execução em lotes com subagentes conforme skill.
-- **Next step**: Incorporar resposta; ler implement.md completo; materializar gates e executar T1 em diante.
-- **Blockers**: Confirmação de Tasks exigida pela skill; nenhum código foi implementado.
-- **Uncommitted files**: .specs/STATE.md e documentos de controle-familiar.
-- **Branch**: Nenhuma; pasta ainda não é repositório Git.
+- **Phase / Task**: Execute, T21 — base frontend e cliente HTTP.
+- **Completed**: T1–T20 em commits atômicos; 41 testes backend passando, Alembic check limpo.
+- **In-progress**: Instalando dependências frontend, cliente HTTP e gates Vitest/Playwright.
+- **Next step**: Concluir gate T21 e implementar T22–T28; Verifier independente obrigatório ao final.
+- **Blockers**: Nenhum; plano e execução aprovados pelo usuário.
+- **Uncommitted files**: frontend/ e esta atualização.
+- **Branch**: main.
+- **Ambiente**: PostgreSQL Docker expense-flow-postgres (localhost:55432, volume expense-flow-dev-data); credenciais somente de desenvolvimento em config.py. API local uvicorn na porta 8000, sessão de terminal 47322.

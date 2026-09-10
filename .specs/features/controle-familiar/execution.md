@@ -345,3 +345,13 @@ Gate: 41 testes passaram; mês quitado exige pagamentos e invalida com pendênci
 | backend/tests/integration/test_month_closure.py:46 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T21
+
+Gate: 2 testes frontend e 1 navegador passaram; build concluído; npm audit sem vulnerabilidades.
+- **Requirement**: DATA-01 AC04; FAM-01.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
