@@ -252,3 +252,26 @@ Gate: 35 testes passaram; fatura liquidada sem dupla contagem e reabertura.
 | backend/tests/integration/test_payments.py:46 — `assert client.get(f"/api/v1/commitments/{c['id']}").json()["pending_count"] == 1` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T16
+
+Gate: 37 testes passaram; antecipação do carro e cartão preserva identidade e totais.
+- **Requirement**: ADV-01 AC01,AC04–06,AC08–10.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/integration/test_advances.py:34 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:35 — `assert r.json()["discount_cents"] == 83500` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:37 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:38 — `assert r.json()["state"] == "planned"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:40 — `assert after["pending_count"] == 35` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:41 — `assert after["original_count"] == 48` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:43 — `assert (last["number"], last["amount_cents"], last["month"], last["original_month"]) == (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:49 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:53 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:77 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:79 — `assert [p["month"] for p in after["installments"]] == ["2026-10-01"] * 3` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:80 — `assert [p["amount_cents"] for p in after["installments"]] == [10000] * 3` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:81 — `assert len({p["cycle_id"] for p in after["installments"]}) == 1` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
