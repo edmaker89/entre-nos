@@ -577,4 +577,19 @@ Ferramentas propostas para todas as tarefas: terminal/edição local; navegador/
 ### T32: Tratar falhas de banco nas rotas e cobrir proteções de antecipação
 - **Requirement**: DATA AC05, ADV proteções de valor e estado.
 - **Done when**: falhas reais de rota geram erro sanitizado, testes detectam antecipação paga e acima do original.
+- **Status**: Complete — 45 backend tests passed; lint and Alembic check passed.
+
+### T33: Explicar e permitir divisão por valores
+- **Requirement**: SPLIT-01 AC04.
+- **Done when**: formulário aceita valores por pessoa e informa diferença exata quando soma diverge.
+- **Status**: Pending.
+
+### T34: Completar evidências dos fluxos financeiros
+- **Requirement**: FAM, CARD, BUY, BILL, SETTLE, ADV, MIG, DATA — lacunas da rodada 1.
+- **Done when**: asserções dos resultados compostos, isolamento, rollback e concorrência passam nas rotas reais.
+- **Status**: Pending.
+
+### T35: Completar evidências de interface móvel
+- **Requirement**: MONTH, BUY, ADV — lacunas da rodada 1.
+- **Done when**: dimensões de toque, prévia completa, aviso e histórico persistido têm verificação de interface.
 - **Status**: Pending.

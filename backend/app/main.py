@@ -14,12 +14,27 @@ from app.api.auth import router as auth_router
 import logging
 from uuid import uuid4
 
+from sqlalchemy.exc import SQLAlchemyError
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 
 app = FastAPI(title="Expense Flow", version="0.1.0")
 logger = logging.getLogger("expense")
+
+
+@app.exception_handler(SQLAlchemyError)
+def handle_database_error(request: Request, exc: SQLAlchemyError):
+    operation_id = str(uuid4())
+    logger.error("database_error operation_id=%s", operation_id)
+    return JSONResponse(
+        status_code=503,
+        content={
+            "code": "database_unavailable",
+            "message": "Não foi possível confirmar a gravação. Tente novamente.",
+            "operation_id": operation_id,
+        },
+    )
 
 
 @app.exception_handler(AppError)

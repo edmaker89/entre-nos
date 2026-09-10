@@ -31,7 +31,7 @@ def database():
         yield s
 
 
-DB = Annotated[Session, Depends(database)]
+DB = Annotated[Session, Depends(database, scope="function")]
 
 
 class Login(BaseModel):
@@ -73,7 +73,7 @@ def current(request: Request, db: DB):
     return member.family_id
 
 
-FamilyID = Annotated[str, Depends(current)]
+FamilyID = Annotated[str, Depends(current, scope="function")]
 
 
 @router.post("/login")

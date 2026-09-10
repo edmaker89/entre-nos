@@ -476,3 +476,55 @@ Gate: 11 frontend unit and 11 E2E tests passed; build passed.
 | --- | --- |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T32
+
+Gate: 45 backend tests passed; lint and Alembic check passed.
+- **Requirement**: DATA AC05, ADV proteções de valor e estado.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/integration/test_uow.py:24 — `with pytest.raises(RuntimeError):` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:29 — `assert s.scalars(select(MonthClosure)).all() == []` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:30 — `assert mutate(s, family, "key", {"amount": 10000}, lambda: change(s)) == {` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:34 — `assert mutate(s, family, "key", {"amount": 10000}, lambda: change(s)) == {` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:37 — `assert len(s.scalars(select(MonthClosure)).all()) == 1` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:38 — `with pytest.raises(AppError, match="conteúdo diferente"):` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:64 — `assert sorted(pool.map(lambda _: update(), range(2))) == ["conflict", "saved"]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:67 — `assert (row.version, row.closed) == (2, False)` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:73 — `with pytest.raises(AppError) as error:` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:76 — `assert error.value.status == 404` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:81 — `with pytest.raises(AppError) as error:` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:84 — `assert error.value.status == 503` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:85 — `assert "database_error operation_id=" in caplog.text` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:86 — `assert "secret-financial-value" not in caplog.text` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:108 — `assert result.status_code == 503` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:110 — `assert payload["code"] == "database_unavailable"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:111 — `assert payload["operation_id"] in caplog.text` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:112 — `assert "database_error" in caplog.text` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:113 — `assert "private-purchase-secret-191900" not in caplog.text + result.text` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_uow.py:114 — `assert client.get("/api/v1/cards").json() == []` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:34 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:35 — `assert r.json()["discount_cents"] == 83500` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:37 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:38 — `assert r.json()["state"] == "planned"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:40 — `assert after["pending_count"] == 35` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:41 — `assert after["original_count"] == 48` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:43 — `assert (last["number"], last["amount_cents"], last["month"], last["original_month"]) == (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:49 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:53 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:77 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:79 — `assert [p["month"] for p in after["installments"]] == ["2026-10-01"] * 3` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:80 — `assert [p["amount_cents"] for p in after["installments"]] == [10000] * 3` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:81 — `assert len({p["cycle_id"] for p in after["installments"]}) == 1` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:93 — `assert paid.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:102 — `assert result.status_code == 409` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:103 — `assert result.json()["code"] == "paid"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:104 — `assert client.get(f"/api/v1/commitments/{c['id']}").json() == before` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:105 — `assert client.get("/api/v1/advances").json() == []` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:118 — `assert result.status_code == 422` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:119 — `assert result.json()["code"] == "invalid_amount"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:120 — `assert client.get(f"/api/v1/commitments/{c['id']}").json() == c` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advances.py:121 — `assert client.get("/api/v1/advances").json() == []` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.

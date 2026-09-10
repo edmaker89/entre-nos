@@ -84,3 +84,31 @@ def test_database_error_log_does_not_leak_payload(engine, caplog):
     assert error.value.status == 503
     assert "database_error operation_id=" in caplog.text
     assert "secret-financial-value" not in caplog.text
+
+
+def test_route_database_failure_is_sanitized_and_rolled_back(client, caplog):
+    """DATA AC05: errors at the real route transaction boundary are sanitized."""
+    from sqlalchemy import event, text
+    from app.db.models import Card
+
+    def fail_commit(session):
+        if session.scalar(select(Card).where(Card.name == "private-purchase-secret-191900")):
+            session.execute(text("SELECT 'private-purchase-secret-191900'::integer"))
+
+    event.listen(Session, "before_commit", fail_commit)
+    try:
+        result = client.post(
+            "/api/v1/cards",
+            json={"name": "private-purchase-secret-191900", "institution": "Test", "holder_id": client.user_id,
+                  "closing_day": 25, "due_day": 5},
+            headers={"Idempotency-Key": str(uuid4())},
+        )
+    finally:
+        event.remove(Session, "before_commit", fail_commit)
+    assert result.status_code == 503
+    payload = result.json()
+    assert payload["code"] == "database_unavailable"
+    assert payload["operation_id"] in caplog.text
+    assert "database_error" in caplog.text
+    assert "private-purchase-secret-191900" not in caplog.text + result.text
+    assert client.get("/api/v1/cards").json() == []

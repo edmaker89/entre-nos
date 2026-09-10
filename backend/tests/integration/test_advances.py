@@ -79,3 +79,43 @@ def test_credit_card_advance_without_discount(client):
     assert [p["month"] for p in after["installments"]] == ["2026-10-01"] * 3
     assert [p["amount_cents"] for p in after["installments"]] == [10000] * 3
     assert len({p["cycle_id"] for p in after["installments"]}) == 1
+
+
+def test_advance_rejects_paid_installment_without_changing_schedule(client):
+    """ADV AC08: a paid installment cannot be anticipated again."""
+    c = imported_car(client)
+    last = c["installments"][-1]
+    paid = client.post(
+        f"/api/v1/installments/{last['id']}/pay",
+        json={"version": last["version"], "paid_at": "2026-10-05"},
+        headers={"Idempotency-Key": str(uuid4())},
+    )
+    assert paid.status_code == 200
+    before = client.get(f"/api/v1/commitments/{c['id']}").json()
+    result = client.post(
+        "/api/v1/advances",
+        json={"commitment_id": c["id"], "version": before["version"],
+              "installment_ids": [last["id"]], "planned_date": "2026-10-05",
+              "amount_cents": 108400},
+        headers={"Idempotency-Key": str(uuid4())},
+    )
+    assert result.status_code == 409
+    assert result.json()["code"] == "paid"
+    assert client.get(f"/api/v1/commitments/{c['id']}").json() == before
+    assert client.get("/api/v1/advances").json() == []
+
+
+def test_advance_rejects_amount_above_original_without_writing(client):
+    """ADV AC08: charges are outside the anticipation flow."""
+    c = imported_car(client)
+    result = client.post(
+        "/api/v1/advances",
+        json={"commitment_id": c["id"], "version": c["version"],
+              "installment_ids": [c["installments"][-1]["id"]],
+              "planned_date": "2026-10-05", "amount_cents": 191901},
+        headers={"Idempotency-Key": str(uuid4())},
+    )
+    assert result.status_code == 422
+    assert result.json()["code"] == "invalid_amount"
+    assert client.get(f"/api/v1/commitments/{c['id']}").json() == c
+    assert client.get("/api/v1/advances").json() == []
