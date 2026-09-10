@@ -385,3 +385,13 @@ Gate: 5 testes unitários frontend e 7 E2E passaram; compra em viewport móvel s
 | --- | --- |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T25
+
+Gate: 6 testes unitários frontend e 8 E2E passaram; cadastro de cartão e consulta de faturas.
+- **Requirement**: CARD-01; SETTLE-01 AC02–05.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
