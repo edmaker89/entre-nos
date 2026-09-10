@@ -355,3 +355,13 @@ Gate: 2 testes frontend e 1 navegador passaram; build concluído; npm audit sem 
 | --- | --- |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T22
+
+Gate: 3 testes unitários frontend e 2 E2E passaram; build concluído.
+- **Requirement**: FAM-01; AUTH-01.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
