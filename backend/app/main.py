@@ -1,3 +1,4 @@
+from app.api.imports import router as imports_router
 from app.api.commitments import router as commitments_router
 from app.api.cards import router as cards_router
 from app.errors import AppError
@@ -51,4 +52,5 @@ app.include_router(auth_router)
 
 app.include_router(cards_router)
 
+app.include_router(imports_router)
 app.include_router(commitments_router)

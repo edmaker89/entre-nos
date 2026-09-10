@@ -159,3 +159,21 @@ Gate: 29 testes passaram; prévia e compra persistida nos ciclos previstos.
 | backend/tests/integration/test_commitments.py:75 — `assert client.get("/api/v1/commitments").json() == []` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T11
+
+Gate: 30 testes passaram; migração parcial preserva total original.
+- **Requirement**: MIG-01 AC01–03; BILL-01 AC03.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/integration/test_imports.py:19 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_imports.py:20 — `assert [p["number"] for p in r.json()["installments"]] == [10, 11, 12]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_imports.py:21 — `assert [p["month"] for p in r.json()["installments"]] == [` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_imports.py:26 — `assert sum(p["amount_cents"] for p in r.json()["installments"]) == 13053` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_imports.py:36 — `assert r.json()["pending_count"] == 35` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_imports.py:37 — `assert r.json()["original_count"] == 48` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_imports.py:38 — `assert r.json()["last_open_number"] == 44` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_imports.py:40 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
