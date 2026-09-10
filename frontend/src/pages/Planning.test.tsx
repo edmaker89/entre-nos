@@ -11,3 +11,8 @@ it('MONTH-01 identifies estimates in projection',async()=>{
  await waitFor(()=>expect(screen.getByText('Inclui estimativas')).toBeTruthy())
  expect(screen.getByText(/360,00/)).toBeTruthy()
 })
+it('MONTH AC06 shows the position of installments ending in the projection',async()=>{
+ vi.mocked(api).mockImplementation(async(path)=>path.startsWith('/forecast')?[{month:'2026-10',totals:{expected:9899},items:[{id:'last',description:'Fogão',number:10,original_count:10}]}]:[])
+ render(<Planning auth={{user:{id:'u',name:'Douglas'},members:[],family_id:'f'}} onChanged={()=>{}}/>)
+ await waitFor(()=>expect(screen.getByText('Fogão · 10/10')).toBeTruthy())
+})

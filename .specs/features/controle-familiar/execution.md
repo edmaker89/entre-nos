@@ -466,3 +466,13 @@ Gate: 9 frontend unit tests and production build passed.
 | --- | --- |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T31
+
+Gate: 11 frontend unit and 11 E2E tests passed; build passed.
+- **Requirement**: MONTH AC01/06/07, ADV AC01, responsividade.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.

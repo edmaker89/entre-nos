@@ -2,8 +2,10 @@ import {useEffect,useRef,useState} from 'react'
 import {ArrowDownLeft,ArrowUpRight,Wallet,ChevronLeft,ChevronRight,Check,CalendarDays} from 'lucide-react'
 import {api,createOperation,money,monthLabel,today} from '../api/client'
 import type {Auth} from '../App'
-export function Overview({auth,onOpen,refresh}:{auth:Auth,onOpen:(id:string)=>void,refresh:number}){
- const [month,setMonth]=useState('default'),[data,setData]=useState<any>(null),[person,setPerson]=useState(''),[filter,setFilter]=useState('all'),[error,setError]=useState(''),[revision,setRevision]=useState(0)
+export function Overview({auth,onOpen,refresh,selectedMonth,onMonthChange}:{auth:Auth,onOpen:(id:string)=>void,refresh:number,selectedMonth?:string,onMonthChange?:(month:string)=>void}){
+ const [localMonth,setLocalMonth]=useState('default')
+ const month=selectedMonth??localMonth,setMonth=onMonthChange??setLocalMonth
+ const [data,setData]=useState<any>(null),[person,setPerson]=useState(''),[filter,setFilter]=useState('all'),[error,setError]=useState(''),[revision,setRevision]=useState(0)
  const sequence=useRef(0)
  useEffect(()=>{const current=++sequence.current;api(`/months/${month}${person?'?person_id='+person:''}`).then(d=>{if(current===sequence.current){setData(d);if(month==='default')setMonth(d.month);setError('')}}).catch(e=>setError(e.message))},[month,person,refresh,revision])
  function shift(offset:number){if(!data)return;const d=new Date(data.month+'-01T12:00:00Z');d.setUTCMonth(d.getUTCMonth()+offset);setMonth(d.toISOString().slice(0,7))}
@@ -16,7 +18,8 @@ export function Overview({auth,onOpen,refresh}:{auth:Auth,onOpen:(id:string)=>vo
  async function close(){try{await createOperation(`/months/${data.month}/close`,'POST',{})();setRevision(x=>x+1);if(window.confirm('Mês sinalizado como quitado. Abrir o próximo mês?'))shift(1)}catch(e){setError((e as Error).message)}}
  if(!data)return <div className="panel">{error?<div role="alert" className="error">{error}</div>:'Carregando seu mês…'}</div>
  const items=data.items.filter((i:any)=>filter==='all'||(filter==='paid'?i.paid_at:!i.paid_at))
- const label=data.month===data.current_month?'Mês atual':data.month>data.current_month?'Planejamento':'Histórico'
+ const nextMonth=new Date(data.current_month+'-01T12:00:00Z');nextMonth.setUTCMonth(nextMonth.getUTCMonth()+1)
+ const label=data.month===data.current_month?'Mês atual':data.month===nextMonth.toISOString().slice(0,7)?'Próximo mês':data.month>data.current_month?'Planejamento':'Histórico'
  function title(item:any){return <><strong>{item.description}</strong><span className="subtext">{item.advance_id?`Antecipação · parcela ${item.number}/${item.original_count}`:item.number?`Parcela ${item.number}/${item.original_count}${item.number===item.original_count?' · Última parcela':''}`:'Conta da casa'}{item.needs_review?' · Conferir fatura':''}</span></>}
  function state(item:any){return <span className={'badge '+(item.paid_at?'':item.estimated?'blue':'amber')}>{item.paid_at?'Pago':item.advance_id?'Antecipação planejada':item.estimated?'Estimado':'Previsto'}</span>}
  return <><div className="row spread"><div className="month-control"><button aria-label="Mês anterior" onClick={()=>shift(-1)}><ChevronLeft size={18}/></button><CalendarDays size={17}/><input aria-label="Competência" type="month" value={data.month} onChange={e=>e.target.value&&setMonth(e.target.value)}/><button aria-label="Próximo mês" onClick={()=>shift(1)}><ChevronRight size={18}/></button><span className="badge">{label}</span></div><span className="muted" style={{fontSize:11}}>Um olhar para o que já está comprometido</span></div>

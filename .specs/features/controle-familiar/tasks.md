@@ -572,7 +572,7 @@ Ferramentas propostas para todas as tarefas: terminal/edição local; navegador/
 ### T31: Completar navegação móvel e informações de planejamento
 - **Requirement**: MONTH AC01/06/07, ADV AC01, responsividade.
 - **Done when**: mês persiste na navegação, logout acessível no celular, detalhes mostram desconto/original, projeção mostra parcelas finais.
-- **Status**: Pending.
+- **Status**: Complete — 11 frontend unit and 11 E2E tests passed; build passed.
 
 ### T32: Tratar falhas de banco nas rotas e cobrir proteções de antecipação
 - **Requirement**: DATA AC05, ADV proteções de valor e estado.
