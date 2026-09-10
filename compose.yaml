@@ -1,0 +1,70 @@
+name: expense-flow
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: expense_owner
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Configure POSTGRES_PASSWORD}
+      POSTGRES_DB: expense
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?Configure APP_DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./deploy/init-db.sh:/docker-entrypoint-initdb.d/10-runtime-role.sh:ro
+    command: [postgres, -c, shared_buffers=128MB, -c, max_connections=30]
+    mem_limit: 768m
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U expense_owner -d expense']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  migrate:
+    image: expense-flow-api:${IMAGE_TAG:-local}
+    command: [alembic, upgrade, head]
+    environment:
+      DATABASE_URL: postgresql+psycopg://expense_owner:${POSTGRES_PASSWORD}@db:5432/expense
+    depends_on:
+      db:
+        condition: service_healthy
+    mem_limit: 256m
+  api:
+    image: expense-flow-api:${IMAGE_TAG:-local}
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg://expense_runtime:${APP_DB_PASSWORD}@db:5432/expense
+      APP_ORIGIN: ${APP_ORIGIN:?Configure APP_ORIGIN}
+      SECURE_COOKIES: ${SECURE_COOKIES:-true}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    mem_limit: 512m
+    healthcheck:
+      test: [CMD, python, -c, 'import urllib.request; urllib.request.urlopen("http://localhost:8000/health")']
+      interval: 10s
+      timeout: 3s
+      retries: 10
+  web:
+    image: expense-flow-web:${IMAGE_TAG:-local}
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.web
+    restart: unless-stopped
+    environment:
+      APP_HOST: ${APP_HOST:?Configure APP_HOST}
+    ports:
+      - '${HTTP_PORT:-80}:80'
+      - '${HTTPS_PORT:-443}:443'
+    depends_on:
+      api:
+        condition: service_healthy
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    mem_limit: 128m
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:

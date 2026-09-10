@@ -415,3 +415,22 @@ Gate: 8 testes unitários frontend e 10 E2E passaram; importação e projeção 
 | --- | --- |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T28
+
+Gate: Compose build/up passaram; smoke validou portas privadas, login, role restrita, persistência e restauração real; 41 testes backend e gates frontend da T27.
+- **Requirement**: AD-002–004; FAM-01 AC03.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| deploy/tests/smoke.py:27 — `assert not config['services']['db'].get('ports')` | Critérios da tarefa acima; valor esperado literal da especificação |
+| deploy/tests/smoke.py:28 — `assert not config['services']['api'].get('ports')` | Critérios da tarefa acima; valor esperado literal da especificação |
+| deploy/tests/smoke.py:35 — `assert request('/health')=={'status':'ok'}` | Critérios da tarefa acima; valor esperado literal da especificação |
+| deploy/tests/smoke.py:40 — `assert error.code==401` | Critérios da tarefa acima; valor esperado literal da especificação |
+| deploy/tests/smoke.py:46 — `assert login['user']['id']==user` | Critérios da tarefa acima; valor esperado literal da especificação |
+| deploy/tests/smoke.py:49 — `assert saved['installments'][0]['amount_cents']==10000` | Critérios da tarefa acima; valor esperado literal da especificação |
+| deploy/tests/smoke.py:51 — `assert sql("SELECT rolsuper OR rolbypassrls FROM pg_roles WHERE rolname='expense_runtime'")=='f'` | Critérios da tarefa acima; valor esperado literal da especificação |
+| deploy/tests/smoke.py:61 — `assert sql("SELECT total_cents FROM commitments WHERE id='"+saved['id']+"'",restore)=='10000'` | Critérios da tarefa acima; valor esperado literal da especificação |
+| deploy/tests/smoke.py:71 — `assert request('/api/v1/commitments/'+saved['id'])['installments'][0]['amount_cents']==10000` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.

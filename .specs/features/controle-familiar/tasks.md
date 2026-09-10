@@ -444,7 +444,7 @@ Fronteiras: T7 → T8; T14 → T15; T21 → T22.
 - **Tests**: integration. Contagem exata será registrada antes de implementar e comparada após o gate, sem remoção/skip para passar.
 - **Gate**: Build.
 - **Commit**: um commit convencional do componente e seus testes após gate e revisão de adequação.
-- **Status**: Pending.
+- **Status**: Complete — Compose build/up passaram; smoke validou portas privadas, login, role restrita, persistência e restauração real; 41 testes backend e gates frontend da T27.
 
 ## Task Granularity Check
 
