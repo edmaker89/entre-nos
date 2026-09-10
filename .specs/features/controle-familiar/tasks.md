@@ -554,3 +554,27 @@ Após T28, Verifier independente obrigatório: ler spec, conferir evidências po
 28 tarefas em quatro lotes de sete. Oferta da skill: delegar lotes sequenciais a subagentes, ou executar no agente principal; nenhum worker foi iniciado. O Verifier final é obrigatório independentemente dessa escolha.
 
 Ferramentas propostas para todas as tarefas: terminal/edição local; navegador/Playwright na UI; tlc-spec-driven para condução. Testes propostos: pytest (unitários e integração PostgreSQL), Vitest e Playwright (frontend). Não há comandos legados a preservar.
+
+## Correções da verificação independente
+
+### T29: Preservar a referência temporal de estimativas
+- **Requirement**: BILL-01 — último valor conhecido antes da competência.
+- **Files**: recurrences.py, test_recurrences.py, tasks.md, execution.md.
+- **Done when**: confirmar novembro em 380 e corrigir outubro para 370 mantém dezembro/janeiro em 380, estimados.
+- **Gate**: backend full + lint.
+- **Status**: Complete — 42 backend tests passed; lint passed.
+
+### T30: Preservar idempotência em tentativas de gravação na interface
+- **Requirement**: DATA AC04.
+- **Done when**: resposta perdida mantém a mesma chave para a mesma operação; sucesso encerra a tentativa.
+- **Status**: Pending.
+
+### T31: Completar navegação móvel e informações de planejamento
+- **Requirement**: MONTH AC01/06/07, ADV AC01, responsividade.
+- **Done when**: mês persiste na navegação, logout acessível no celular, detalhes mostram desconto/original, projeção mostra parcelas finais.
+- **Status**: Pending.
+
+### T32: Tratar falhas de banco nas rotas e cobrir proteções de antecipação
+- **Requirement**: DATA AC05, ADV proteções de valor e estado.
+- **Done when**: falhas reais de rota geram erro sanitizado, testes detectam antecipação paga e acima do original.
+- **Status**: Pending.

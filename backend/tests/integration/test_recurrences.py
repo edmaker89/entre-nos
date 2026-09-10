@@ -52,3 +52,25 @@ def test_recurring_occurrences_are_unique_and_preserve_past(client):
         )
         == 2
     )
+
+
+def test_older_correction_does_not_override_newer_confirmed_amount(client):
+    """BILL-01: estimates use the latest known value before each month."""
+    client.post(
+        "/api/v1/recurrences",
+        json={"description": "Energia", "amount_cents": 36000, "variable": True,
+              "due_day": 5, "start_month": "2026-10-01",
+              "shares": [{"user_id": client.user_id, "weight": 1}]},
+        headers={"Idempotency-Key": str(uuid4())},
+    )
+    rows = client.get("/api/v1/recurrences?from_month=2026-10-01&months=3").json()[0]["occurrences"]
+    for row, amount in [(rows[1], 38000), (rows[0], 37000)]:
+        result = client.patch(
+            f"/api/v1/occurrences/{row['id']}",
+            json={"version": row["version"], "amount_cents": amount},
+            headers={"Idempotency-Key": str(uuid4())},
+        )
+        assert result.status_code == 200
+    actual = client.get("/api/v1/recurrences?from_month=2026-10-01&months=4").json()[0]["occurrences"]
+    assert [o["amount_cents"] for o in actual] == [37000, 38000, 38000, 38000]
+    assert [o["estimated"] for o in actual] == [False, False, True, True]

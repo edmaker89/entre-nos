@@ -434,3 +434,25 @@ Gate: Compose build/up passaram; smoke validou portas privadas, login, role rest
 | deploy/tests/smoke.py:71 — `assert request('/api/v1/commitments/'+saved['id'])['installments'][0]['amount_cents']==10000` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T29
+
+Gate: 42 backend tests passed; lint passed.
+- **Requirement**: BILL-01 — último valor conhecido antes da competência.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/integration/test_recurrences.py:16 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:19 — `assert [o["amount_cents"] for o in first["occurrences"]] == [36000] * 3` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:20 — `assert all(o["estimated"] for o in first["occurrences"])` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:21 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:35 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:37 — `assert [o["amount_cents"] for o in after["occurrences"]] == [36000, 38000, 38000]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:38 — `assert after["occurrences"][1]["estimated"] is False` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:39 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:47 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:73 — `assert result.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:75 — `assert [o["amount_cents"] for o in actual] == [37000, 38000, 38000, 38000]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:76 — `assert [o["estimated"] for o in actual] == [False, False, True, True]` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.

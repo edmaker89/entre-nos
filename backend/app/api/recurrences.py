@@ -139,6 +139,17 @@ def edit(id: str, body: AmountEdit, request: Request, db: DB, family: FamilyID):
         row.estimated = False
         rule = get_row(db, Recurrence, row.recurrence_id)
         if rule.variable:
+            next_confirmed = db.scalar(
+                select(Occurrence.month)
+                .where(
+                    Occurrence.recurrence_id == rule.id,
+                    Occurrence.month > row.month,
+                    Occurrence.estimated.is_(False),
+                    Occurrence.deleted_at.is_(None),
+                )
+                .order_by(Occurrence.month)
+                .limit(1)
+            )
             for future in db.scalars(
                 select(Occurrence).where(
                     Occurrence.recurrence_id == rule.id,
@@ -148,6 +159,8 @@ def edit(id: str, body: AmountEdit, request: Request, db: DB, family: FamilyID):
                     Occurrence.deleted_at.is_(None),
                 )
             ):
+                if next_confirmed and future.month >= next_confirmed:
+                    continue
                 future.amount_cents = body.amount_cents
                 future.version += 1
         db.flush()
