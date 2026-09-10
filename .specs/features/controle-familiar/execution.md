@@ -65,3 +65,20 @@ Gate: 10 testes passaram; cookies, CSRF, expiração, logout e rate limit.
 | backend/tests/integration/test_auth.py:117 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T6
+
+Gate: 11 testes passaram; provisionamento e redefinição com revogação.
+- **Requirement**: FAM-01; AUTH-01.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/integration/test_cli.py:17 — `assert s.get(User, user).email == email` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cli.py:18 — `assert s.get(Membership, (family, user)) is not None` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cli.py:20 — `with pytest.raises(ValueError, match="cadastrado"):` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cli.py:24 — `assert passwords.verify(s.get(User, user).password_hash, "another-password") is True` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cli.py:25 — `assert all(` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cli.py:31 — `assert second_family == family` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cli.py:32 — `assert second_user != user` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
