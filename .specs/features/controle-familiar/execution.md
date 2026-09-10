@@ -213,3 +213,22 @@ Gate: 33 testes passaram; fechamento efetivo, remanejamento e conferência.
 | backend/tests/integration/test_cycle_changes.py:41 — `assert p.status_code == 409` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T14
+
+Gate: 34 testes passaram; recorrências idempotentes e estimativas; Alembic check limpo.
+- **Requirement**: BILL-01 AC01–04.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/integration/test_recurrences.py:16 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:19 — `assert [o["amount_cents"] for o in first["occurrences"]] == [36000] * 3` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:20 — `assert all(o["estimated"] for o in first["occurrences"])` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:21 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:35 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:37 — `assert [o["amount_cents"] for o in after["occurrences"]] == [36000, 38000, 38000]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:38 — `assert after["occurrences"][1]["estimated"] is False` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:39 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_recurrences.py:47 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.

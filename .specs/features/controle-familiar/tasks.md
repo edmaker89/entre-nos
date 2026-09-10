@@ -248,7 +248,7 @@ Fronteiras: T7 → T8; T14 → T15; T21 → T22.
 - **Tests**: integration. Contagem exata será registrada antes de implementar e comparada após o gate, sem remoção/skip para passar.
 - **Gate**: Build.
 - **Commit**: um commit convencional do componente e seus testes após gate e revisão de adequação.
-- **Status**: Pending.
+- **Status**: Complete — 34 testes passaram; recorrências idempotentes e estimativas; Alembic check limpo.
 
 ### T15: Pagamento e reabertura
 
