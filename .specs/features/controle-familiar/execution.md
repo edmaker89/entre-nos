@@ -405,3 +405,13 @@ Gate: 7 testes unitários frontend; 8 E2E passaram e teste de antecipação pass
 | --- | --- |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T27
+
+Gate: 8 testes unitários frontend e 10 E2E passaram; importação e projeção completas.
+- **Requirement**: BILL-01; MIG-01; MONTH-01 AC06.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
