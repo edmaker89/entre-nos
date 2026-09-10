@@ -62,18 +62,11 @@ def preview_purchase(db, family, body):
     card = get_row(db, Card, body.card_id) if body.card_id else None
     if card:
         first = first_cycle(body.purchased_at, card.closing_day, card.due_day)
-        # Effective cycle dates supersede habitual dates when present.
-        known = db.scalars(
-            select(Cycle)
-            .where(Cycle.card_id == card.id, Cycle.closing_date >= body.purchased_at)
-            .order_by(Cycle.closing_date)
-        ).first()
-        if known and known.closing_date <= add_months(body.purchased_at, 2):
-            first = {
-                "month": known.month,
-                "due_date": known.due_date,
-                "needs_review": known.closing_date == body.purchased_at,
-            }
+        from app.api.cycles import effective_first
+
+        resolved, review = effective_first(db, card, body.purchased_at)
+        first["month"] = resolved
+        first["needs_review"] = review
         start = month_start(body.first_month) if body.first_month else first["month"]
     else:
         first = {"needs_review": False}

@@ -197,3 +197,19 @@ Gate: 32 testes passaram; deslocamento, exclusão e bloqueios de pagos/antecipa�
 | backend/tests/integration/test_changes.py:80 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T13
+
+Gate: 33 testes passaram; fechamento efetivo, remanejamento e conferência.
+- **Requirement**: CARD-01 AC04; SETTLE-01 AC05; ADV-01 AC10.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/integration/test_cycle_changes.py:17 — `assert p.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cycle_changes.py:18 — `assert p.json()["changes"][0]["first_month"] == "2026-11-01"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cycle_changes.py:24 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cycle_changes.py:25 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cycle_changes.py:35 — `assert r.json()["confirmed"] is True` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cycle_changes.py:41 — `assert p.status_code == 409` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
