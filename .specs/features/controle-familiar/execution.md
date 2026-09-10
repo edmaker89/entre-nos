@@ -456,3 +456,13 @@ Gate: 42 backend tests passed; lint passed.
 | backend/tests/integration/test_recurrences.py:76 — `assert [o["estimated"] for o in actual] == [False, False, True, True]` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T30
+
+Gate: 9 frontend unit tests and production build passed.
+- **Requirement**: DATA AC04.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.

@@ -1,4 +1,5 @@
 let csrf:string|undefined
+const pendingOperations=new Map<string,string>()
 export class ApiError extends Error {constructor(message:string,public status:number){super(message)}}
 export async function api<T=any>(path:string, options:RequestInit={}):Promise<T>{
  const method=options.method??'GET'
@@ -11,12 +12,24 @@ export async function api<T=any>(path:string, options:RequestInit={}):Promise<T>
  const data=await response.json()
  if(!response.ok){if(response.status===401){csrf=undefined;window.dispatchEvent(new Event('session-expired'))}throw new ApiError(data.message??'Não foi possível concluir.',response.status)}
  if(path==='/auth/login')csrf=data.csrf_token
- if(path==='/auth/logout')csrf=undefined
+ if(path==='/auth/logout'){csrf=undefined;pendingOperations.clear()}
  return data
 }
 export function createOperation<T=any>(path:string,method:string,body?:unknown){
- const key=crypto.randomUUID()
- return ()=>api<T>(path,{method,headers:{'Idempotency-Key':key},...(body!==undefined?{body:JSON.stringify(body)}:{})})
+ const serialized=body===undefined?undefined:JSON.stringify(body)
+ const identity=JSON.stringify([path,method,serialized])
+ const key=pendingOperations.get(identity)??crypto.randomUUID()
+ pendingOperations.set(identity,key)
+ return async()=>{
+  try{
+   const result=await api<T>(path,{method,headers:{'Idempotency-Key':key},...(serialized!==undefined?{body:serialized}:{})})
+   if(pendingOperations.get(identity)===key)pendingOperations.delete(identity)
+   return result
+  }catch(error){
+   if(error instanceof ApiError&&error.status>=400&&error.status<500&&pendingOperations.get(identity)===key)pendingOperations.delete(identity)
+   throw error
+  }
+ }
 }
 export const money=(cents:number)=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(cents/100)
 export const monthLabel=(month:string)=>new Intl.DateTimeFormat('pt-BR',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(month+'-01T12:00:00Z'))

@@ -567,7 +567,7 @@ Ferramentas propostas para todas as tarefas: terminal/edição local; navegador/
 ### T30: Preservar idempotência em tentativas de gravação na interface
 - **Requirement**: DATA AC04.
 - **Done when**: resposta perdida mantém a mesma chave para a mesma operação; sucesso encerra a tentativa.
-- **Status**: Pending.
+- **Status**: Complete — 9 frontend unit tests and production build passed.
 
 ### T31: Completar navegação móvel e informações de planejamento
 - **Requirement**: MONTH AC01/06/07, ADV AC01, responsividade.
