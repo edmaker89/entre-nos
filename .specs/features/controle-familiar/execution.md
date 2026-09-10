@@ -375,3 +375,13 @@ Gate: 4 testes unitários frontend e 6 E2E passaram; quatro larguras sem overflo
 | --- | --- |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T24
+
+Gate: 5 testes unitários frontend e 7 E2E passaram; compra em viewport móvel salva após prévia.
+- **Requirement**: BUY-01 AC05; SPLIT-01; DATA-01 AC01,AC04.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
