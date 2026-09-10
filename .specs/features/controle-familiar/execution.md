@@ -275,3 +275,21 @@ Gate: 37 testes passaram; antecipação do carro e cartão preserva identidade e
 | backend/tests/integration/test_advances.py:81 — `assert len({p["cycle_id"] for p in after["installments"]}) == 1` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T17
+
+Gate: 38 testes passaram; pagamento reduz pendentes e cancelamento restaura cronograma.
+- **Requirement**: ADV-01 AC02–03,AC05,AC07–09.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/integration/test_advance_changes.py:25 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advance_changes.py:26 — `assert r.json()["state"] == "paid"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advance_changes.py:28 — `assert (after["pending_count"], after["last_open_number"], after["original_count"]) == (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advance_changes.py:33 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advance_changes.py:46 — `assert r.json()["state"] == "planned"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advance_changes.py:52 — `assert r.json()["state"] == "cancelled"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advance_changes.py:55 — `assert (last["month"], last["amount_cents"], last["due_date"]) == (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_advance_changes.py:60 — `assert after["pending_count"] == 35` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.

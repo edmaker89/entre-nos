@@ -1,3 +1,4 @@
+from app.api.advance_changes import router as advance_changes_router
 from app.api.advances import router as advances_router
 from app.api.payments import router as payments_router
 from app.api.recurrences import router as recurrences_router
@@ -69,3 +70,5 @@ app.include_router(recurrences_router)
 app.include_router(payments_router)
 
 app.include_router(advances_router)
+
+app.include_router(advance_changes_router)
