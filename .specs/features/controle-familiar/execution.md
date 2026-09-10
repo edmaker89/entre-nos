@@ -293,3 +293,19 @@ Gate: 38 testes passaram; pagamento reduz pendentes e cancelamento restaura cron
 | backend/tests/integration/test_advance_changes.py:60 — `assert after["pending_count"] == 35` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T18
+
+Gate: 14 testes unitários passaram; regra do dia 10 e timezone.
+- **Requirement**: MONTH-01 AC01,AC08.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/unit/test_month_selection.py:8 — `assert default_month(datetime(2026, 10, 9, 12, tzinfo=timezone.utc), False) == "2026-10"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_month_selection.py:9 — `assert default_month(datetime(2026, 10, 10, 12, tzinfo=timezone.utc), False) == "2026-11"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_month_selection.py:10 — `assert default_month(datetime(2026, 10, 5, 12, tzinfo=timezone.utc), True) == "2026-11"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_month_selection.py:11 — `assert default_month(datetime(2026, 11, 1, 12, tzinfo=timezone.utc), False) == "2026-11"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_month_selection.py:12 — `assert default_month(datetime(2026, 10, 10, 1, tzinfo=timezone.utc), False) == "2026-10"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_month_selection.py:13 — `assert default_month(datetime(2026, 12, 10, 12, tzinfo=timezone.utc), False) == "2027-01"` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
