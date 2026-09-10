@@ -416,7 +416,7 @@ Fronteiras: T7 → T8; T14 → T15; T21 → T22.
 - **Tests**: unit + e2e. Contagem exata será registrada antes de implementar e comparada após o gate, sem remoção/skip para passar.
 - **Gate**: Full.
 - **Commit**: um commit convencional do componente e seus testes após gate e revisão de adequação.
-- **Status**: Pending.
+- **Status**: Complete — 7 testes unitários frontend; 8 E2E passaram e teste de antecipação passou após recarregar fixture inserida por API; asserções preservadas.
 
 ### T27: Tela de recorrências e migração
 

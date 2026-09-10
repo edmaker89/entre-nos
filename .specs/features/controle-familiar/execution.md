@@ -395,3 +395,13 @@ Gate: 6 testes unitários frontend e 8 E2E passaram; cadastro de cartão e consu
 | --- | --- |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T26
+
+Gate: 7 testes unitários frontend; 8 E2E passaram e teste de antecipação passou após recarregar fixture inserida por API; asserções preservadas.
+- **Requirement**: ADV-01 AC01–10; SETTLE-01 AC01,AC03,AC06.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
