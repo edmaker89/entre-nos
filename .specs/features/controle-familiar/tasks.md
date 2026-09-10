@@ -122,7 +122,7 @@ Fronteiras: T7 → T8; T14 → T15; T21 → T22.
 - **Tests**: integration. Contagem exata será registrada antes de implementar e comparada após o gate, sem remoção/skip para passar.
 - **Gate**: Full.
 - **Commit**: um commit convencional do componente e seus testes após gate e revisão de adequação.
-- **Status**: Pending.
+- **Status**: Complete — 10 testes passaram; cookies, CSRF, expiração, logout e rate limit.
 
 ### T6: Provisionamento administrativo
 

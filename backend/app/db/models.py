@@ -2,8 +2,17 @@ from datetime import date, datetime, timezone
 from uuid import uuid4
 
 from sqlalchemy import (
-    BigInteger, Boolean, CheckConstraint, Date, DateTime, ForeignKey,
-    ForeignKeyConstraint, Integer, JSON, String, UniqueConstraint,
+    BigInteger,
+    Boolean,
+    CheckConstraint,
+    Date,
+    DateTime,
+    ForeignKey,
+    ForeignKeyConstraint,
+    Integer,
+    JSON,
+    String,
+    UniqueConstraint,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -76,7 +85,9 @@ class Card(Financial, Base):
     due_day: Mapped[int] = mapped_column(Integer)
     __table_args__ = (
         UniqueConstraint("id", "family_id"),
-        ForeignKeyConstraint(["family_id", "holder_id"], ["memberships.family_id", "memberships.user_id"]),
+        ForeignKeyConstraint(
+            ["family_id", "holder_id"], ["memberships.family_id", "memberships.user_id"]
+        ),
         CheckConstraint("closing_day BETWEEN 1 AND 31 AND due_day BETWEEN 1 AND 31"),
     )
 
@@ -90,7 +101,8 @@ class Cycle(Financial, Base):
     confirmed: Mapped[bool] = mapped_column(Boolean, default=False)
     paid_at: Mapped[date | None] = mapped_column(Date)
     __table_args__ = (
-        UniqueConstraint("id", "family_id"), UniqueConstraint("card_id", "month"),
+        UniqueConstraint("id", "family_id"),
+        UniqueConstraint("card_id", "month"),
         ForeignKeyConstraint(["card_id", "family_id"], ["cards.id", "cards.family_id"]),
         CheckConstraint("due_date > closing_date"),
     )
@@ -109,7 +121,9 @@ class Commitment(Financial, Base):
     imported: Mapped[bool] = mapped_column(Boolean, default=False)
     __table_args__ = (
         UniqueConstraint("id", "family_id"),
-        ForeignKeyConstraint(["family_id", "buyer_id"], ["memberships.family_id", "memberships.user_id"]),
+        ForeignKeyConstraint(
+            ["family_id", "buyer_id"], ["memberships.family_id", "memberships.user_id"]
+        ),
         ForeignKeyConstraint(["card_id", "family_id"], ["cards.id", "cards.family_id"]),
         CheckConstraint("original_count BETWEEN 1 AND 120 AND total_cents > 0"),
     )
@@ -122,9 +136,14 @@ class Share(Financial, Base):
     weight: Mapped[int] = mapped_column(BigInteger)
     position: Mapped[int] = mapped_column(Integer)
     __table_args__ = (
-        ForeignKeyConstraint(["commitment_id", "family_id"], ["commitments.id", "commitments.family_id"]),
-        ForeignKeyConstraint(["family_id", "user_id"], ["memberships.family_id", "memberships.user_id"]),
-        UniqueConstraint("commitment_id", "user_id"), CheckConstraint("weight >= 0"),
+        ForeignKeyConstraint(
+            ["commitment_id", "family_id"], ["commitments.id", "commitments.family_id"]
+        ),
+        ForeignKeyConstraint(
+            ["family_id", "user_id"], ["memberships.family_id", "memberships.user_id"]
+        ),
+        UniqueConstraint("commitment_id", "user_id"),
+        CheckConstraint("weight >= 0"),
     )
 
 
@@ -145,10 +164,17 @@ class Installment(Financial, Base):
     needs_review: Mapped[bool] = mapped_column(Boolean, default=False)
     manually_assigned: Mapped[bool] = mapped_column(Boolean, default=False)
     __table_args__ = (
-        UniqueConstraint("id", "family_id"), UniqueConstraint("commitment_id", "number"),
-        ForeignKeyConstraint(["commitment_id", "family_id"], ["commitments.id", "commitments.family_id"]),
-        ForeignKeyConstraint(["cycle_id", "family_id"], ["invoice_cycles.id", "invoice_cycles.family_id"]),
-        ForeignKeyConstraint(["original_cycle_id", "family_id"], ["invoice_cycles.id", "invoice_cycles.family_id"]),
+        UniqueConstraint("id", "family_id"),
+        UniqueConstraint("commitment_id", "number"),
+        ForeignKeyConstraint(
+            ["commitment_id", "family_id"], ["commitments.id", "commitments.family_id"]
+        ),
+        ForeignKeyConstraint(
+            ["cycle_id", "family_id"], ["invoice_cycles.id", "invoice_cycles.family_id"]
+        ),
+        ForeignKeyConstraint(
+            ["original_cycle_id", "family_id"], ["invoice_cycles.id", "invoice_cycles.family_id"]
+        ),
         CheckConstraint("number > 0 AND original_cents > 0 AND amount_cents > 0"),
     )
 
@@ -162,8 +188,10 @@ class Recurrence(Financial, Base):
     variable: Mapped[bool] = mapped_column(Boolean, default=False)
     due_day: Mapped[int] = mapped_column(Integer)
     shares: Mapped[list] = mapped_column(JSON)
-    __table_args__ = (UniqueConstraint("id", "family_id"),
-                      CheckConstraint("amount_cents > 0 AND due_day BETWEEN 1 AND 31"))
+    __table_args__ = (
+        UniqueConstraint("id", "family_id"),
+        CheckConstraint("amount_cents > 0 AND due_day BETWEEN 1 AND 31"),
+    )
 
 
 class Occurrence(Financial, Base):
@@ -175,8 +203,11 @@ class Occurrence(Financial, Base):
     estimated: Mapped[bool] = mapped_column(Boolean)
     paid_at: Mapped[date | None] = mapped_column(Date)
     __table_args__ = (
-        ForeignKeyConstraint(["recurrence_id", "family_id"], ["recurring_rules.id", "recurring_rules.family_id"]),
-        UniqueConstraint("recurrence_id", "month"), CheckConstraint("amount_cents > 0"),
+        ForeignKeyConstraint(
+            ["recurrence_id", "family_id"], ["recurring_rules.id", "recurring_rules.family_id"]
+        ),
+        UniqueConstraint("recurrence_id", "month"),
+        CheckConstraint("amount_cents > 0"),
     )
 
 
@@ -189,7 +220,9 @@ class Advance(Financial, Base):
     state: Mapped[str] = mapped_column(String(20), default="planned")
     __table_args__ = (
         UniqueConstraint("id", "family_id"),
-        ForeignKeyConstraint(["commitment_id", "family_id"], ["commitments.id", "commitments.family_id"]),
+        ForeignKeyConstraint(
+            ["commitment_id", "family_id"], ["commitments.id", "commitments.family_id"]
+        ),
         CheckConstraint("state IN ('planned', 'paid', 'cancelled') AND amount_cents > 0"),
     )
 
@@ -200,8 +233,12 @@ class AdvanceItem(Financial, Base):
     installment_id: Mapped[str] = mapped_column(String(36))
     snapshot: Mapped[dict] = mapped_column(JSON)
     __table_args__ = (
-        ForeignKeyConstraint(["advance_id", "family_id"], ["advance_plans.id", "advance_plans.family_id"]),
-        ForeignKeyConstraint(["installment_id", "family_id"], ["installments.id", "installments.family_id"]),
+        ForeignKeyConstraint(
+            ["advance_id", "family_id"], ["advance_plans.id", "advance_plans.family_id"]
+        ),
+        ForeignKeyConstraint(
+            ["installment_id", "family_id"], ["installments.id", "installments.family_id"]
+        ),
         UniqueConstraint("advance_id", "installment_id"),
     )
 
