@@ -232,3 +232,23 @@ Gate: 34 testes passaram; recorrências idempotentes e estimativas; Alembic chec
 | backend/tests/integration/test_recurrences.py:47 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T15
+
+Gate: 35 testes passaram; fatura liquidada sem dupla contagem e reabertura.
+- **Requirement**: SETTLE-01 AC02–04; ADV-01 AC02,AC07; MONTH-01 AC08.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/integration/test_payments.py:19 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_payments.py:20 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_payments.py:27 — `assert len(after["installments"]) == 1` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_payments.py:28 — `assert after["installments"][0]["amount_cents"] == 30000` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_payments.py:29 — `assert after["installments"][0]["month"] == "2026-10-01"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_payments.py:30 — `assert after["installments"][0]["paid_at"] == "2026-11-05"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_payments.py:31 — `assert after["pending_count"] == 0` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_payments.py:32 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_payments.py:45 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_payments.py:46 — `assert client.get(f"/api/v1/commitments/{c['id']}").json()["pending_count"] == 1` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.

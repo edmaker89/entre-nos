@@ -1,3 +1,4 @@
+from app.api.payments import router as payments_router
 from app.api.recurrences import router as recurrences_router
 from app.api.cycles import router as cycles_router
 from app.api.commitment_changes import router as changes_router
@@ -63,3 +64,5 @@ app.include_router(changes_router)
 app.include_router(cycles_router)
 
 app.include_router(recurrences_router)
+
+app.include_router(payments_router)
