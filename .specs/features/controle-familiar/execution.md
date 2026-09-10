@@ -101,3 +101,21 @@ Gate: 16 testes passaram; fechamento e ano/meses curtos; Alembic check limpo.
 | backend/tests/unit/test_cycles.py:30 — `assert cycle["due_date"] == date(2026, 10, 5)` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T8
+
+Gate: 13 testes unitários passaram; rateio e limites exatos.
+- **Requirement**: BUY-01 AC04; SPLIT-01 AC01–04; ADV-01 AC06.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/unit/test_money.py:8 — `assert installments(10000, 3) == [3334, 3333, 3333]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_money.py:9 — `assert installments(30000, 3) == [10000, 10000, 10000]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_money.py:13 — `assert allocate(3333, [1, 1]) == [1667, 1666]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_money.py:14 — `assert allocate(10000, [0, 1]) == [0, 10000]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_money.py:15 — `assert allocate(10000, [1, 1]) == [5000, 5000]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_money.py:16 — `assert allocate(19999, [10000, 10000]) == [10000, 9999]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_money.py:17 — `assert allocate(19998, [10000, 10000]) == [9999, 9999]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_money.py:24 — `with pytest.raises(ValueError):` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.

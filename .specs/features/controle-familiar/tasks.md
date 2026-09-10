@@ -164,7 +164,7 @@ Fronteiras: T7 → T8; T14 → T15; T21 → T22.
 - **Tests**: unit. Contagem exata será registrada antes de implementar e comparada após o gate, sem remoção/skip para passar.
 - **Gate**: Quick.
 - **Commit**: um commit convencional do componente e seus testes após gate e revisão de adequação.
-- **Status**: Pending.
+- **Status**: Complete — 13 testes unitários passaram; rateio e limites exatos.
 
 ### T9: Cadastro de cartões
 
