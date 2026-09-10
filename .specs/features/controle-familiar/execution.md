@@ -177,3 +177,23 @@ Gate: 30 testes passaram; migração parcial preserva total original.
 | backend/tests/integration/test_imports.py:40 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T12
+
+Gate: 32 testes passaram; deslocamento, exclusão e bloqueios de pagos/antecipações.
+- **Requirement**: SETTLE-01 AC01,AC03,AC06; ADV-01 AC10.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/integration/test_changes.py:15 — `assert [p["month"] for p in preview.json()["installments"]] == [` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_changes.py:23 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_changes.py:24 — `assert [p["amount_cents"] for p in r.json()["installments"]] == [10000] * 3` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_changes.py:25 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_changes.py:33 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_changes.py:40 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_changes.py:47 — `assert client.get(f"/api/v1/commitments/{c['id']}").status_code == 404` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_changes.py:48 — `assert client.get("/api/v1/commitments").json() == []` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_changes.py:61 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_changes.py:80 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.

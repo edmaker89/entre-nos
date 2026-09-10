@@ -1,3 +1,4 @@
+from app.api.commitment_changes import router as changes_router
 from app.api.imports import router as imports_router
 from app.api.commitments import router as commitments_router
 from app.api.cards import router as cards_router
@@ -54,3 +55,5 @@ app.include_router(cards_router)
 
 app.include_router(imports_router)
 app.include_router(commitments_router)
+
+app.include_router(changes_router)
