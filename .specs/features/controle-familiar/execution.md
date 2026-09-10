@@ -82,3 +82,22 @@ Gate: 11 testes passaram; provisionamento e redefinição com revogação.
 | backend/tests/integration/test_cli.py:32 — `assert second_user != user` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T7
+
+Gate: 16 testes passaram; fechamento e ano/meses curtos; Alembic check limpo.
+- **Requirement**: CARD-01 AC01–03; BUY-01 AC01–03.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/unit/test_cycles.py:14 — `assert cycle["month"] == month` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_cycles.py:15 — `assert cycle["needs_review"] == review` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_cycles.py:16 — `assert cycle["due_date"] == date(month.year, month.month, 5)` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_cycles.py:21 — `assert cycle["closing_date"] == date(2027, 2, 28)` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_cycles.py:22 — `assert cycle["due_date"] == date(2027, 3, 5)` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_cycles.py:23 — `assert add_months(date(2026, 12, 1), 1) == date(2027, 1, 1)` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_cycles.py:24 — `assert month_start(date(2026, 10, 15)) == date(2026, 10, 1)` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_cycles.py:29 — `assert cycle["closing_date"] == date(2026, 9, 5)` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/unit/test_cycles.py:30 — `assert cycle["due_date"] == date(2026, 10, 5)` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
