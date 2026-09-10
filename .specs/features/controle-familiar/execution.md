@@ -119,3 +119,22 @@ Gate: 13 testes unitários passaram; rateio e limites exatos.
 | backend/tests/unit/test_money.py:24 — `with pytest.raises(ValueError):` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T9
+
+Gate: 25 testes passaram; cadastro, edição, repetição e validação de cartão.
+- **Requirement**: CARD-01; FAM-01 AC02.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/integration/test_cards.py:16 — `assert r.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cards.py:18 — `assert (card["closing_day"], card["due_day"], card["holder_id"]) == (25, 5, client.user_id)` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cards.py:19 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cards.py:23 — `assert len(client.get("/api/v1/cards").json()) == 1` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cards.py:29 — `assert r.json()["closing_day"] == 26` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cards.py:30 — `assert r.json()["version"] == 2` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cards.py:34 — `assert r.status_code == 422` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cards.py:40 — `assert r.status_code == 422` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_cards.py:41 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.

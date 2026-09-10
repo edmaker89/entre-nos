@@ -1,3 +1,4 @@
+from app.api.cards import router as cards_router
 from app.errors import AppError
 from app.api.auth import router as auth_router
 import logging
@@ -46,3 +47,5 @@ async def private_responses(request: Request, call_next):
 
 
 app.include_router(auth_router)
+
+app.include_router(cards_router)
