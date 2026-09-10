@@ -365,3 +365,13 @@ Gate: 3 testes unitários frontend e 2 E2E passaram; build concluído.
 | --- | --- |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T23
+
+Gate: 4 testes unitários frontend e 6 E2E passaram; quatro larguras sem overflow após correção.
+- **Requirement**: MONTH-01 AC01–08.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
