@@ -73,3 +73,16 @@ def test_invalid_purchase_leaves_no_records(client):
             == 422
         )
     assert client.get("/api/v1/commitments").json() == []
+
+
+@pytest.mark.parametrize("weights,difference,message", [([7000, 2000], 1000, "Faltam R$ 10,00"), ([7000, 4000], -1000, "Sobram R$ 10,00")])
+def test_split_difference_explained_without_saving(client, weights, difference, message):
+    result = client.post("/api/v1/commitments", json={
+        **purchase_body(client), "total_cents": 10000,
+        "shares": [{"user_id": person, "weight": weight} for person, weight in zip([client.user_id, client.other_id], weights)]
+    }, headers={"Idempotency-Key": str(uuid4())})
+    assert result.status_code == 422
+    assert result.json()["difference_cents"] == difference
+    assert result.json()["fields"] == ["shares"]
+    assert message in result.json()["message"]
+    assert client.get("/api/v1/commitments").json() == []

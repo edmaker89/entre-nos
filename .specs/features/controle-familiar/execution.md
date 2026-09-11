@@ -528,3 +528,29 @@ Gate: 45 backend tests passed; lint and Alembic check passed.
 | backend/tests/integration/test_advances.py:121 — `assert client.get("/api/v1/advances").json() == []` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T33
+
+Gate: 47 backend, 12 frontend unit, 11 E2E passed; lint and build passed.
+- **Requirement**: SPLIT-01 AC04.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/integration/test_commitments.py:41 — `assert preview.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_commitments.py:42 — `assert preview.json()["installments"][0]["month"] == first` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_commitments.py:43 — `assert preview.json()["installments"][0]["needs_review"] == review` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_commitments.py:46 — `assert saved.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_commitments.py:48 — `assert [p["amount_cents"] for p in body["installments"]] == [10000] * 3` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_commitments.py:49 — `assert body["shares"][0]["user_id"] == client.other_id` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_commitments.py:50 — `assert body["installments"][0]["month"] == first` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_commitments.py:51 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_commitments.py:55 — `assert client.get(f"/api/v1/commitments/{body['id']}").json()["pending_count"] == 3` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_commitments.py:67 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_commitments.py:75 — `assert client.get("/api/v1/commitments").json() == []` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_commitments.py:84 — `assert result.status_code == 422` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_commitments.py:85 — `assert result.json()["difference_cents"] == difference` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_commitments.py:86 — `assert result.json()["fields"] == ["shares"]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_commitments.py:87 — `assert message in result.json()["message"]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_commitments.py:88 — `assert client.get("/api/v1/commitments").json() == []` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.

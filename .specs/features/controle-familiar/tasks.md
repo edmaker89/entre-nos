@@ -582,7 +582,7 @@ Ferramentas propostas para todas as tarefas: terminal/edição local; navegador/
 ### T33: Explicar e permitir divisão por valores
 - **Requirement**: SPLIT-01 AC04.
 - **Done when**: formulário aceita valores por pessoa e informa diferença exata quando soma diverge.
-- **Status**: Pending.
+- **Status**: Complete — 47 backend, 12 frontend unit, 11 E2E passed; lint and build passed.
 
 ### T34: Completar evidências dos fluxos financeiros
 - **Requirement**: FAM, CARD, BUY, BILL, SETTLE, ADV, MIG, DATA — lacunas da rodada 1.

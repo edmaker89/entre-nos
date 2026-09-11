@@ -31,10 +31,14 @@ class PurchaseInput(BaseModel):
 
     @model_validator(mode="after")
     def valid(self):
-        if self.total_cents < self.count or sum(s.weight for s in self.shares) != self.total_cents:
-            raise ValueError(
-                "A divisão precisa somar o total e cada parcela deve ter ao menos um centavo."
-            )
+        if self.total_cents < self.count:
+            raise AppError("invalid_amount", "Cada parcela deve ter ao menos um centavo.", 422, fields=["total_cents"])
+        difference = self.total_cents - sum(s.weight for s in self.shares)
+        if difference:
+            value = f"{abs(difference) // 100},{abs(difference) % 100:02d}"
+            direction = "Faltam" if difference > 0 else "Sobram"
+            raise AppError("invalid_split", f"{direction} R$ {value} na divisão entre responsáveis.", 422,
+                           fields=["shares"], difference_cents=difference)
         if len({s.user_id for s in self.shares}) != len(self.shares):
             raise ValueError("Responsável repetido.")
         return self

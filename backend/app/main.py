@@ -41,7 +41,9 @@ def handle_database_error(request: Request, exc: SQLAlchemyError):
 def handle_app_error(request: Request, exc: AppError):
     return JSONResponse(
         status_code=exc.status,
-        content={"code": exc.code, "message": exc.message, "operation_id": str(uuid4())},
+        content={"code": exc.code, "message": exc.message, "operation_id": str(uuid4()),
+                 **({"fields": exc.fields} if exc.fields else {}),
+                 **({"difference_cents": exc.difference_cents} if exc.difference_cents is not None else {})},
     )
 
 
