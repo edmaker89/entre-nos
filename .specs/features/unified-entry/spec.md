@@ -18,3 +18,11 @@ Os testes existentes serão adaptados somente nos cliques/rótulos alterados pel
 
 ### Execução T1
 Build e13 unitários passaram; e2e/unified-entry.spec.ts:13–40 verifica os três tipos, limpeza após sucesso, continuidade na telaCartões, competência herdada e total1743,51. Novos formulários reutilizam APIs existentes. T1 concluída.
+
+### Solicitação adicional — excluir recorrência cadastrada por engano
+REC AC01: ação Excluir recorrência em Lançamentos exige confirmação, exclui logicamente regra e ocorrências em uma transação, removendo projeções; não altera outros registros. REC AC02: qualquer ocorrência paga bloqueia exclusão até reabertura, versões conflitantes não sobrescrevem. REC AC03: cancelar confirmação não grava; erro permanece visível e cadastro é mantido.
+
+Tarefa adicional independente: API de exclusão + ação na gestão de recorrências, testes PostgreSQL e navegador. Não excluir dados reais automaticamente.
+
+### Execução T2
+Build e13 unitários passaram. e2e/unified-entry.spec.ts:56–79 verifica total700, cinco pendências noResumo, sete itens emLançamentos, pesquisa/filtro resultando1/0/6 itens, mês preservado e ausência das antigas entradas noPlanejamento. T2 concluída.

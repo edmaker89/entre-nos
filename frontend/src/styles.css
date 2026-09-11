@@ -6,3 +6,5 @@
 .payment-card button:hover{color:#183a30;background:#e5eee8;border-color:#a9c2b5}
 
 .expense-types{display:grid;gap:12px}.expense-types button{justify-content:flex-start;text-align:left;padding:18px;gap:16px}.expense-types strong,.expense-types small{display:block}.expense-types small{font-weight:400;margin-top:5px}.dialog footer{flex-wrap:wrap}.dialog form{margin-top:12px}
+
+.entry-search{margin-top:18px;max-width:480px}
