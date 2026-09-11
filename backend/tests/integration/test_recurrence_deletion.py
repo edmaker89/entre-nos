@@ -80,3 +80,32 @@ def test_paid_occurrence_blocks_delete_until_explicit_reopen(client):
         "paid": 0,
         "remaining": 0,
     }
+
+
+def test_deleting_mistaken_rule_preserves_other_recurrence_and_occurrences(client):
+    wrong = create(client)
+    response = client.post(
+        "/api/v1/recurrences",
+        json={
+            "description": "Internet correta",
+            "amount_cents": 11900,
+            "due_day": 10,
+            "start_month": "2026-10-01",
+            "shares": [{"user_id": client.user_id, "weight": 1}],
+        },
+        headers={"Idempotency-Key": str(uuid4())},
+    )
+    assert response.status_code == 200
+    correct_id = response.json()["id"]
+    before = next(
+        r
+        for r in client.get("/api/v1/recurrences?from_month=2026-10-01&months=3").json()
+        if r["id"] == correct_id
+    )
+    assert remove(client, wrong).status_code == 200
+    after = client.get("/api/v1/recurrences?from_month=2026-10-01&months=3").json()
+    assert after == [before]
+    assert [
+        m["totals"]["expected"]
+        for m in client.get("/api/v1/forecast?from_month=2026-10&months=3").json()
+    ] == [11900, 11900, 11900]

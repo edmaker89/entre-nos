@@ -43,3 +43,6 @@ Build e13 unitários passaram. e2e/unified-entry.spec.ts:56–79 verifica total7
 | UI AC01 | acceptance.spec.ts:12–32 (quatro larguras), unified-entry.spec.ts:5/39 | Cadastro responsivo com prévia e sem overflow |
 
 Mapa reverso: cada cenário acima deriva de ENTRY/NAV/REC/UI ou dos critérios financeiros já aprovados; nenhuma asserção financeira foi removida ou enfraquecida. Sem alteração no esquema ou nos dados de uso local.
+
+### Complemento de evidências após revisão independente
+Adicionados registro-controle preservado na exclusão, erroDELETE visível sem perda de cadastro, filtro por pessoa e testes dos três formulários em360/390/768/1440px (overflow medido dentro do modal).76backend15unit26E2E passaram, total117; nenhuma mudança de comportamento foi necessária. O teste-controle cobre a falha simulada que removia a restrição recurrence_id da exclusão.
