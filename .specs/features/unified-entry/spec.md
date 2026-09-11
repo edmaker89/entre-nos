@@ -26,3 +26,6 @@ Tarefa adicional independente: API de exclusão + ação na gestão de recorrên
 
 ### Execução T2
 Build e13 unitários passaram. e2e/unified-entry.spec.ts:56–79 verifica total700, cinco pendências noResumo, sete itens emLançamentos, pesquisa/filtro resultando1/0/6 itens, mês preservado e ausência das antigas entradas noPlanejamento. T2 concluída.
+
+### Execução REC
+75 testes backend e13 unitários frontend passaram, build/lint passaram. test_recurrence_deletion.py verifica confirmação, versão, softdelete regra/ocorrências, projeção zerada e bloqueio até reabrir pagamento; unified-entry.spec.ts:75 confirma cancelamento sem exclusão e sucesso removendo a recorrência e zerando o mês. Nenhum registro real foi excluído.

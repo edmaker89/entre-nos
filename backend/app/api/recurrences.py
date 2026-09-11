@@ -191,3 +191,30 @@ def end(id: str, body: End, request: Request, db: DB, family: FamilyID):
         return serialize(rule)
 
     return operation(db, family, request, body.model_dump(), action)
+
+
+@router.delete("/recurrences/{id}")
+def delete(
+    id: str, version: int, request: Request, db: DB, family: FamilyID, confirm: bool = False
+):
+    def action():
+        if not confirm:
+            raise AppError("confirmation", "Confirme a exclusão da recorrência e suas ocorrências.")
+        rule = get_row(db, Recurrence, id)
+        check_version(rule, version)
+        rows = db.scalars(
+            select(Occurrence).where(
+                Occurrence.recurrence_id == id,
+                Occurrence.deleted_at.is_(None),
+            )
+        ).all()
+        if any(row.paid_at for row in rows):
+            raise AppError("paid", "Reabra os pagamentos desta recorrência antes de excluir.")
+        rule.deleted_at = now()
+        for row in rows:
+            row.deleted_at = rule.deleted_at
+            row.version += 1
+        db.flush()
+        return {"ok": True}
+
+    return operation(db, family, request, {"version": version, "confirm": confirm}, action)
