@@ -29,3 +29,17 @@ Build e13 unitários passaram. e2e/unified-entry.spec.ts:56–79 verifica total7
 
 ### Execução REC
 75 testes backend e13 unitários frontend passaram, build/lint passaram. test_recurrence_deletion.py verifica confirmação, versão, softdelete regra/ocorrências, projeção zerada e bloqueio até reabrir pagamento; unified-entry.spec.ts:75 confirma cancelamento sem exclusão e sucesso removendo a recorrência e zerando o mês. Nenhum registro real foi excluído.
+
+### Gate integrado T3
+75 testes backend,15 unitários frontend e22 E2E passaram; lint/build/Alembic check passaram. Total112. Nos testes antigos, somente entrada/rótulo de cadastro foi atualizado conforme a nova navegação aprovada; asserções financeiras foram preservadas.
+
+| Critério | Evidência de resultado | Resultado esperado |
+| --- | --- | --- |
+| ENTRY AC01/02/03 | unified-entry.spec.ts:13–39: competência2026-10, statusDespesa salva, campos vazios após salvar, total1743,51 | Fluxo consecutivo de três tipos sem sair da tela |
+| ENTRY AC02 falha | ScheduledExpenseForm.test.tsx:25–31: alertFalha de conexão, descrição/valor mantidos, onSaved somente após sucesso | Sem falso sucesso/perda de formulário |
+| NAV AC01/02 | unified-entry.spec.ts:56–73: total700, linhas5/7/1/0/6 e mês2026-10 | Resumo distinto da lista pesquisável; Planejamento sem cadastros |
+| REC AC01/02 | test_recurrence_deletion.py: confirmação/versão409, exclusão200, projeção[0,0,0], pagamento preservado até reabrir | Exclusão atômica protegida |
+| REC AC03 | unified-entry.spec.ts:75–96: cancelar mantém regra, aceitar remove regra/lista e total0 | Confirmação controlada pelo usuário |
+| UI AC01 | acceptance.spec.ts:12–32 (quatro larguras), unified-entry.spec.ts:5/39 | Cadastro responsivo com prévia e sem overflow |
+
+Mapa reverso: cada cenário acima deriva de ENTRY/NAV/REC/UI ou dos critérios financeiros já aprovados; nenhuma asserção financeira foi removida ou enfraquecida. Sem alteração no esquema ou nos dados de uso local.

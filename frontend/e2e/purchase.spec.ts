@@ -3,7 +3,8 @@ import {login} from './helpers'
 test('BUY-01 mobile purchase preview and save',async({page})=>{
  await page.setViewportSize({width:390,height:844});await login(page)
  await page.getByLabel('Competência',{exact:true}).fill('2026-10')
- await page.getByRole('button',{name:'Adicionar gasto',exact:true}).click()
+ await page.getByRole('button',{name:'Adicionar despesa',exact:true}).click()
+ await page.getByRole('button',{name:/Compra ou despesa Uma compra nova/}).click()
  await page.getByLabel('Descrição',{exact:true}).fill('Mercado da família')
  await page.getByLabel('Valor total (R$)',{exact:true}).fill('300')
  await page.getByLabel('Parcelas',{exact:true}).fill('3')

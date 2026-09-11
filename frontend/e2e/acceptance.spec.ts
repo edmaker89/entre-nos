@@ -15,7 +15,8 @@ for(const width of [360,390,768,1440])test(`BUY MONTH complete preview and touch
  for(const button of await page.getByRole('button').all()){
   if(await button.isVisible()){const box=await button.boundingBox();expect(box!.width).toBeGreaterThanOrEqual(44);expect(box!.height).toBeGreaterThanOrEqual(44)}
  }
- await page.getByRole('button',{name:'Adicionar gasto',exact:true}).click()
+ await page.getByRole('button',{name:'Adicionar despesa',exact:true}).click()
+ await page.getByRole('button',{name:/Compra ou despesa Uma compra nova/}).click()
  await page.getByLabel('Descrição',{exact:true}).fill('Compra com descrição longa para conferir no celular')
  await page.getByLabel('Valor total (R$)',{exact:true}).fill('300')
  await page.getByLabel('Parcelas',{exact:true}).fill('3')
