@@ -680,3 +680,9 @@ Gate: 13 frontend unit tests and build passed.
 | --- | --- |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## Fechamento e ambiente local — 2026-09-11
+
+Verificação independente concluída: validation.md registra PASS para 58/58 critérios, 105 testes e seis mutantes detectados. Docker Compose atualizado e smoke de persistência/backup/restauração passou. QA visual desktop e celular realizada em artifacts/ antes da limpeza solicitada pelo usuário; imagens são ilustrativas do estado de demonstração anterior.
+
+A pedido do usuário, o banco da aplicação localhost:8089 foi limpo, mantendo a revisão Alembic84e008d3ef75. Backup anterior preservado. Criado um usuário real local, login verificado e dashboard com previsto/pago/restante zero. Credenciais e backup não são versionados. Nenhuma implantação remota ou aceitação humana foi declarada.

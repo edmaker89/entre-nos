@@ -1,0 +1,44 @@
+[
+  {
+    "name": "rounding",
+    "file": "app/domain/money.py",
+    "line": 8,
+    "killed": true,
+    "summary": "d.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/integration/test_acceptance_edges.py::test_custom_split_applies_proportions_to_each_installment\nFAILED tests/unit/test_money.py::test_installment_rounding - assert [3333, 33...\n2 failed, 71 passed, 2 warnings in 12.41s\n"
+  },
+  {
+    "name": "allocation",
+    "file": "app/domain/money.py",
+    "line": 19,
+    "killed": true,
+    "summary": " info ============================\nFAILED tests/integration/test_acceptance_edges.py::test_custom_split_applies_proportions_to_each_installment\nFAILED tests/integration/test_acceptance_edges.py::test_card_advance_amounts_shares_payment_and_reopen[19998-parts1]\nFAILED tests/integration/test_acceptance_edges.py::test_card_advance_amounts_shares_payment_and_reopen[19999-parts2]\nFAILED tests/unit/test_money.py::test_responsibility_rounding - assert [1666,...\n4 failed, 69 passed, 2 warnings in 9.09s\n"
+  },
+  {
+    "name": "pending_counter",
+    "file": "app/api/commitments.py",
+    "line": 108,
+    "killed": true,
+    "summary": "test_card_advance_amounts_shares_payment_and_reopen[20000-parts0]\nFAILED tests/integration/test_acceptance_edges.py::test_card_advance_amounts_shares_payment_and_reopen[19998-parts1]\nFAILED tests/integration/test_acceptance_edges.py::test_card_advance_amounts_shares_payment_and_reopen[19999-parts2]\nFAILED tests/integration/test_advance_changes.py::test_pay_reopen_cancel_advance\nFAILED tests/integration/test_payments.py::test_invoice_payment_and_reopening\n5 failed, 68 passed, 2 warnings in 9.11s\n"
+  },
+  {
+    "name": "paid_rejection",
+    "file": "app/api/advances.py",
+    "line": 37,
+    "killed": true,
+    "summary": "tionWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/integration/test_advances.py::test_advance_rejects_paid_installment_without_changing_schedule\n1 failed, 72 passed, 2 warnings in 10.15s\n"
+  },
+  {
+    "name": "advance_limit",
+    "file": "app/api/advances.py",
+    "line": 52,
+    "killed": true,
+    "summary": "eprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/integration/test_advances.py::test_advance_rejects_amount_above_original_without_writing\n1 failed, 72 passed, 2 warnings in 9.48s\n"
+  },
+  {
+    "name": "csrf",
+    "file": "app/api/auth.py",
+    "line": 65,
+    "killed": true,
+    "summary": "e/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/integration/test_auth.py::test_cookie_login_csrf_logout - Assert...\n1 failed, 72 passed, 2 warnings in 9.85s\n"
+  }
+]

@@ -1,0 +1,236 @@
+{
+  "schema": 1,
+  "promote_threshold": 2,
+  "window_days": 45,
+  "quarantine_threshold": 2,
+  "next_id": 12,
+  "lessons": [
+    {
+      "id": "L-001",
+      "key": "surviving_mutant::teste rejei o de antecipa o de parcela paga pela rota financeira e confirme aus ncia de mudan a persistida",
+      "text": "Teste rejeição de antecipação de parcela paga pela rota financeira e confirme ausência de mudança persistida.",
+      "signal": "surviving_mutant",
+      "scope": "backend/advances",
+      "status": "candidate",
+      "features": [
+        "controle-familiar"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "M4 (backend/advances)"
+      ],
+      "created": "2026-09-10T21:53:29Z",
+      "last_seen": "2026-09-10T21:53:29Z"
+    },
+    {
+      "id": "L-002",
+      "key": "surviving_mutant::teste os limites inferior e superior dos valores de antecipa o e confirme os valores persistidos",
+      "text": "Teste os limites inferior e superior dos valores de antecipação e confirme os valores persistidos.",
+      "signal": "surviving_mutant",
+      "scope": "backend/advances",
+      "status": "candidate",
+      "features": [
+        "controle-familiar"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "M5 (backend/advances)"
+      ],
+      "created": "2026-09-10T21:53:29Z",
+      "last_seen": "2026-09-10T21:53:29Z"
+    },
+    {
+      "id": "L-003",
+      "key": "ac_gap::conserve a chave da opera o na interface at confirmar a resposta ou mudar o conte do",
+      "text": "Conserve a chave da operação na interface até confirmar a resposta ou mudar o conteúdo.",
+      "signal": "ac_gap",
+      "scope": "frontend",
+      "status": "candidate",
+      "features": [
+        "controle-familiar"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "DATA-01 AC04 (frontend)"
+      ],
+      "created": "2026-09-10T21:53:29Z",
+      "last_seen": "2026-09-10T21:53:29Z"
+    },
+    {
+      "id": "L-004",
+      "key": "ac_gap::injete falhas sql no caminho http real e verifique rollback e logs sanitizados correlacionados resposta",
+      "text": "Injete falhas SQL no caminho HTTP real e verifique rollback e logs sanitizados correlacionados à resposta.",
+      "signal": "ac_gap",
+      "scope": "backend/api",
+      "status": "candidate",
+      "features": [
+        "controle-familiar"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "DATA-01 AC05 (backend/api)"
+      ],
+      "created": "2026-09-10T21:53:29Z",
+      "last_seen": "2026-09-10T21:53:29Z"
+    },
+    {
+      "id": "L-005",
+      "key": "ac_gap::ao editar per odos antigos recalcule estimativas a partir do ltimo valor confirmado anterior a cada per odo",
+      "text": "Ao editar períodos antigos recalcule estimativas a partir do último valor confirmado anterior a cada período.",
+      "signal": "ac_gap",
+      "scope": "backend/recurrences",
+      "status": "candidate",
+      "features": [
+        "controle-familiar"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "BILL-01 AC02 (backend/recurrences)"
+      ],
+      "created": "2026-09-10T21:53:29Z",
+      "last_seen": "2026-09-10T21:53:29Z"
+    },
+    {
+      "id": "L-006",
+      "key": "ac_gap::mantenha a compet ncia escolhida acima de componentes desmontados pela navega o",
+      "text": "Mantenha a competência escolhida acima de componentes desmontados pela navegação.",
+      "signal": "ac_gap",
+      "scope": "frontend",
+      "status": "candidate",
+      "features": [
+        "controle-familiar"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "MONTH-01 AC01 (frontend)"
+      ],
+      "created": "2026-09-10T21:53:29Z",
+      "last_seen": "2026-09-10T21:53:29Z"
+    },
+    {
+      "id": "L-007",
+      "key": "ac_gap::verifique textos de compet ncia e avisos de pend ncias com datas controladas",
+      "text": "Verifique textos de competência e avisos de pendências com datas controladas.",
+      "signal": "ac_gap",
+      "scope": "frontend",
+      "status": "candidate",
+      "features": [
+        "controle-familiar"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "MONTH-01 AC07 (frontend)"
+      ],
+      "created": "2026-09-10T21:53:29Z",
+      "last_seen": "2026-09-10T21:53:29Z"
+    },
+    {
+      "id": "L-008",
+      "key": "ac_gap::verifique a identifica o de parcelas finais na proje o renderizada",
+      "text": "Verifique a identificação de parcelas finais na projeção renderizada.",
+      "signal": "ac_gap",
+      "scope": "frontend",
+      "status": "candidate",
+      "features": [
+        "controle-familiar"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "MONTH-01 AC06 (frontend)"
+      ],
+      "created": "2026-09-10T21:53:29Z",
+      "last_seen": "2026-09-10T21:53:29Z"
+    },
+    {
+      "id": "L-009",
+      "key": "ac_gap::verifique os detalhes hist ricos de antecipa o ap s salvar e recarregar a p gina",
+      "text": "Verifique os detalhes históricos de antecipação após salvar e recarregar a página.",
+      "signal": "ac_gap",
+      "scope": "frontend",
+      "status": "candidate",
+      "features": [
+        "controle-familiar"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "ADV-01 AC01 (frontend)"
+      ],
+      "created": "2026-09-10T21:53:29Z",
+      "last_seen": "2026-09-10T21:53:29Z"
+    },
+    {
+      "id": "L-010",
+      "key": "ac_gap::exponha diferen as de rateio no erro de valida o do formul rio sem registrar dados financeiros no log",
+      "text": "Exponha diferenças de rateio no erro de validação do formulário sem registrar dados financeiros no log.",
+      "signal": "ac_gap",
+      "scope": "backend/api",
+      "status": "candidate",
+      "features": [
+        "controle-familiar"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "SPLIT-01 AC04 (backend/api)"
+      ],
+      "created": "2026-09-10T21:53:29Z",
+      "last_seen": "2026-09-10T21:53:29Z"
+    },
+    {
+      "id": "L-011",
+      "key": "ac_gap::teste cada resultado composto do crit rio na camada que o usu rio realmente executa incluindo persist ncia e falhas",
+      "text": "Teste cada resultado composto do critério na camada que o usuário realmente executa, incluindo persistência e falhas.",
+      "signal": "ac_gap",
+      "scope": "acceptance-tests",
+      "status": "candidate",
+      "features": [
+        "controle-familiar"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "FAM-01 AC01 (acceptance-tests)",
+        "FAM-01 AC02 (acceptance-tests)",
+        "FAM-01 AC03 (acceptance-tests)",
+        "CARD-01 AC04 (acceptance-tests)",
+        "BUY-01 AC01 (acceptance-tests)",
+        "BUY-01 AC02 (acceptance-tests)",
+        "BUY-01 AC03 (acceptance-tests)",
+        "BUY-01 AC05 (acceptance-tests)",
+        "BUY-01 AC06 (acceptance-tests)",
+        "SPLIT-01 AC01 (acceptance-tests)",
+        "BILL-01 AC01 (acceptance-tests)",
+        "BILL-01 AC03 (acceptance-tests)",
+        "BILL-01 AC04 (acceptance-tests)",
+        "MONTH-01 AC04 (acceptance-tests)",
+        "MONTH-01 AC08 (acceptance-tests)",
+        "SETTLE-01 AC01 (acceptance-tests)",
+        "SETTLE-01 AC03 (acceptance-tests)",
+        "SETTLE-01 AC05 (acceptance-tests)",
+        "SETTLE-01 AC06 (acceptance-tests)",
+        "ADV-01 AC03 (acceptance-tests)",
+        "ADV-01 AC04 (acceptance-tests)",
+        "ADV-01 AC05 (acceptance-tests)",
+        "ADV-01 AC06 (acceptance-tests)",
+        "ADV-01 AC07 (acceptance-tests)",
+        "ADV-01 AC08 (acceptance-tests)",
+        "ADV-01 AC09 (acceptance-tests)",
+        "ADV-01 AC10 (acceptance-tests)",
+        "MIG-01 AC02 (acceptance-tests)",
+        "MIG-01 AC03 (acceptance-tests)",
+        "DATA-01 AC01 (acceptance-tests)"
+      ],
+      "created": "2026-09-10T21:53:29Z",
+      "last_seen": "2026-09-10T21:53:30Z"
+    }
+  ]
+}

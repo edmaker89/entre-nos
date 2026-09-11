@@ -547,11 +547,11 @@ Fronteiras: T7 → T8; T14 → T15; T21 → T22.
 
 ## Fechamento
 
-Após T28, Verifier independente obrigatório: ler spec, conferir evidências por AC, executar gates e mutações em cópia descartável, registrar validation.md. Falhas geram correções com novos commits; máximo de três ciclos antes de escalar. Nenhuma cobertura foi verificada ainda.
+Após T28, Verifier independente obrigatório: ler spec, conferir evidências por AC, executar gates e mutações em cópia descartável, registrar validation.md. Falhas geram correções com novos commits; máximo de três ciclos antes de escalar. Verificação concluída em validation.md: 58/58 ACs, 105 testes, seis mutantes detectados.
 
-## Estratégia de execução a confirmar
+## Estratégia de execução aprovada
 
-28 tarefas em quatro lotes de sete. Oferta da skill: delegar lotes sequenciais a subagentes, ou executar no agente principal; nenhum worker foi iniciado. O Verifier final é obrigatório independentemente dessa escolha.
+28 tarefas em quatro lotes de sete. Usuário autorizou execução no agente principal; nenhum worker de implementação foi iniciado. O Verifier final é obrigatório independentemente dessa escolha.
 
 Ferramentas propostas para todas as tarefas: terminal/edição local; navegador/Playwright na UI; tlc-spec-driven para condução. Testes propostos: pytest (unitários e integração PostgreSQL), Vitest e Playwright (frontend). Não há comandos legados a preservar.
 

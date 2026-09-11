@@ -212,19 +212,19 @@ Teste independente: relógio controlado, revogação, cookies, CSRF e limitaçã
 
 | ID | Prioridade | Estado | Tarefas |
 | --- | --- | --- | --- |
-| FAM-01 | P1 | Pending | T2–T6,T21,T22 |
-| CARD-01 | P1 | Pending | T2,T7,T9,T13,T25 |
-| BUY-01 | P1 | Pending | T2,T4,T7,T8,T10,T24 |
-| SPLIT-01 | P1 | Pending | T2,T8,T10,T24 |
-| BILL-01 | P1 | Pending | T2,T11,T14,T27 |
-| MONTH-01 | P1 | Pending | T15,T18–T20,T23,T27 |
-| SETTLE-01 | P1 | Pending | T2,T12,T13,T15,T25,T26 |
-| ADV-01 | P1 | Pending | T2,T4,T8,T12,T13,T15–T17,T19,T26 |
-| MIG-01 | P1 | Pending | T2,T11,T27 |
-| DATA-01 | P1 | Pending | T1,T4,T10,T21 |
-| AUTH-01 | P1 | Pending | T5,T6,T22 |
+| FAM-01 | P1 | Verified | T2–T6,T21,T22 |
+| CARD-01 | P1 | Verified | T2,T7,T9,T13,T25 |
+| BUY-01 | P1 | Verified | T2,T4,T7,T8,T10,T24 |
+| SPLIT-01 | P1 | Verified | T2,T8,T10,T24 |
+| BILL-01 | P1 | Verified | T2,T11,T14,T27 |
+| MONTH-01 | P1 | Verified | T15,T18–T20,T23,T27 |
+| SETTLE-01 | P1 | Verified | T2,T12,T13,T15,T25,T26 |
+| ADV-01 | P1 | Verified | T2,T4,T8,T12,T13,T15–T17,T19,T26 |
+| MIG-01 | P1 | Verified | T2,T11,T27 |
+| DATA-01 | P1 | Verified | T1,T4,T10,T21 |
+| AUTH-01 | P1 | Verified | T5,T6,T22 |
 
-Cobertura planejada: 11 requisitos mapeados a tarefas; execução e verificação pendentes. Nenhum está implementado ou verificado.
+Cobertura verificada: 11 requisitos e 58 critérios aceitos na verificação automatizada independente, conforme validation.md (2026-09-11). T29–T36 corrigem lacunas da primeira rodada. UAT humano e implantação remota permanecem pendentes.
 
 ## Critério de sucesso e fechamento da fase
 

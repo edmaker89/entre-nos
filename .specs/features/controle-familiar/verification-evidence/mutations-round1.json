@@ -1,0 +1,44 @@
+[
+  {
+    "name": "rounding",
+    "file": "app/domain/money.py",
+    "line": 8,
+    "killed": true,
+    "summary": "e/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/unit/test_money.py::test_installment_rounding - assert [3333, 33...\n1 failed, 40 passed, 2 warnings in 3.85s\n"
+  },
+  {
+    "name": "allocation",
+    "file": "app/domain/money.py",
+    "line": 19,
+    "killed": true,
+    "summary": "e/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/unit/test_money.py::test_responsibility_rounding - assert [1666,...\n1 failed, 40 passed, 2 warnings in 3.89s\n"
+  },
+  {
+    "name": "pending_counter",
+    "file": "app/api/commitments.py",
+    "line": 104,
+    "killed": true,
+    "summary": "deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/integration/test_advance_changes.py::test_pay_reopen_cancel_advance\nFAILED tests/integration/test_payments.py::test_invoice_payment_and_reopening\n2 failed, 39 passed, 2 warnings in 3.80s\n"
+  },
+  {
+    "name": "paid_rejection",
+    "file": "app/api/advances.py",
+    "line": 37,
+    "killed": false,
+    "summary": "w-family/backend/.venv/lib/python3.12/site-packages/starlette/testclient.py:53\n  /Users/douglassilva/expense-flow-family/backend/.venv/lib/python3.12/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n41 passed, 2 warnings in 3.91s\n"
+  },
+  {
+    "name": "advance_limit",
+    "file": "app/api/advances.py",
+    "line": 52,
+    "killed": false,
+    "summary": "w-family/backend/.venv/lib/python3.12/site-packages/starlette/testclient.py:53\n  /Users/douglassilva/expense-flow-family/backend/.venv/lib/python3.12/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n41 passed, 2 warnings in 3.99s\n"
+  },
+  {
+    "name": "csrf",
+    "file": "app/api/auth.py",
+    "line": 65,
+    "killed": true,
+    "summary": "e/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/integration/test_auth.py::test_cookie_login_csrf_logout - Assert...\n1 failed, 40 passed, 2 warnings in 3.88s\n"
+  }
+]

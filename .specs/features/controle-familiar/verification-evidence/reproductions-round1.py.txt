@@ -1,0 +1,19 @@
+from uuid import uuid4
+
+def test_older_correction_preserves_latest_known_estimate(client):
+    body={'description':'Energia','amount_cents':36000,'variable':True,'due_day':5,'start_month':'2026-10-01','shares':[{'user_id':client.user_id,'weight':1}]}
+    assert client.post('/api/v1/recurrences',json=body,headers={'Idempotency-Key':str(uuid4())}).status_code==200
+    rows=client.get('/api/v1/recurrences?from_month=2026-10-01&months=3').json()[0]['occurrences']
+    for i,amount in [(1,38000),(0,37000)]:
+        assert client.patch('/api/v1/occurrences/'+rows[i]['id'],json={'version':1,'amount_cents':amount},headers={'Idempotency-Key':str(uuid4())}).status_code==200
+    rows=client.get('/api/v1/recurrences?from_month=2026-10-01&months=3').json()[0]['occurrences']
+    assert [r['amount_cents'] for r in rows]==[37000,38000,38000]
+
+def test_route_database_failure_has_safe_503(client,monkeypatch):
+    from app.api import commitments
+    from sqlalchemy.exc import IntegrityError
+    def fail(*a,**kw):raise IntegrityError('INSERT financial',{'description':'private-sentinel'},Exception('driver failure'))
+    monkeypatch.setattr(commitments,'persist_purchase',fail)
+    client._transport.raise_server_exceptions=False
+    result=client.post('/api/v1/commitments',json={'description':'private-sentinel','buyer_id':client.user_id,'purchased_at':'2026-10-01','total_cents':10000,'count':1,'shares':[{'user_id':client.user_id,'weight':10000}]},headers={'Idempotency-Key':str(uuid4())})
+    assert result.status_code==503, (result.status_code,result.text)

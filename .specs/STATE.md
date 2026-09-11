@@ -45,11 +45,12 @@
 ## Handoff
 
 - **Feature**: controle-familiar — .specs/features/controle-familiar/
-- **Phase / Task**: Execute, T21 — base frontend e cliente HTTP.
-- **Completed**: T1–T20 em commits atômicos; 41 testes backend passando, Alembic check limpo.
-- **In-progress**: Instalando dependências frontend, cliente HTTP e gates Vitest/Playwright.
-- **Next step**: Concluir gate T21 e implementar T22–T28; Verifier independente obrigatório ao final.
-- **Blockers**: Nenhum; plano e execução aprovados pelo usuário.
-- **Uncommitted files**: frontend/ e esta atualização.
+- **Phase / Task**: Implementação e verificação automatizada concluídas; UAT humano pendente.
+- **Completed**: T1–T36 em commits atômicos. Verifier independente: PASS, 58/58 critérios, 105 testes (73 backend + 13 frontend unit + 19 E2E), seis mutantes detectados. Lint, build e Alembic check passaram.
+- **Deploy local**: Compose expense-flow-validation em http://localhost:8089 atualizado; backup/restauração e persistência após restart verificados. VM remota não foi alterada.
+- **Última solicitação**: usuário pediu limpeza do banco da aplicação local e criação de seu acesso. Limpeza executada preservando Alembic; usuário Douglas criado e login validado com totais zerados. Credenciais em .env.local-access, modo 600, ignorado pelo Git. A demonstração anterior foi removida.
+- **Backup pré-limpeza**: backups/before-local-reset-20260911-063912.dump (local, ignorado pelo Git).
+- **Next step**: Usuário testar aplicação vazia com seu acesso. Para implantação remota ainda faltam destino/acesso à VM e domínio/configuração HTTPS.
+- **Blockers**: Nenhum para uso local. Não executar smoke de seed no banco limpo sem necessidade; ele cria dados de teste.
 - **Branch**: main.
-- **Ambiente**: PostgreSQL Docker expense-flow-postgres (localhost:55432, volume expense-flow-dev-data); credenciais somente de desenvolvimento em config.py. API local uvicorn na porta 8000, sessão de terminal 47322.
+- **Ambiente dev separado**: Postgres expense-flow-postgres localhost:55432 e API8000 permanecem para testes; não são o banco da aplicação8089.

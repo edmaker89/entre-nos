@@ -32,7 +32,7 @@ Abra http://127.0.0.1:5173. Senhas administrativas são solicitadas interativame
 
 ## Testes
 
-Usam o PostgreSQL de desenvolvimento migrado. Os testes de navegador provisionam famílias exclusivas no banco local; nunca apontar testes para produção.
+Usam o PostgreSQL de desenvolvimento migrado. Os testes de navegador provisionam famílias exclusivas e isolam a janela de login da origem loopback no banco local. A fixture recusa qualquer banco fora do endereço de desenvolvimento; nunca apontar testes para produção. A limitação de login de produção é verificada separadamente pelos testes de autenticação.
 
 ```sh
 ./scripts/check-backend.sh
