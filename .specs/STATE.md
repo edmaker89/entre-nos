@@ -54,3 +54,7 @@
 - **Blockers**: Nenhum para uso local. Não executar smoke de seed no banco limpo sem necessidade; ele cria dados de teste.
 - **Branch**: main.
 - **Ambiente dev separado**: Postgres expense-flow-postgres localhost:55432 e API8000 permanecem para testes; não são o banco da aplicação8089.
+
+### UAT — ajuste visual dos cartões (2026-09-11)
+
+Usuário reportou botões brancos sobre branco no cartão escuro. Corrigido em22f9f84 com cores explícitas para texto/ícones, normal/hover. Build e QA navegador390/1440px passaram; Compose web atualizado. Feature pontual em .specs/features/card-button-contrast/.
