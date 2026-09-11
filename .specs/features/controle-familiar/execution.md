@@ -660,3 +660,13 @@ Gate: 73 backend tests passed; lint and Alembic check passed.
 | backend/tests/integration/test_acceptance_edges.py:555 — `assert len(get(client, "/commitments")) == 1` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T35
+
+Gate: 12 frontend unit, 19 E2E passed; build passed.
+- **Requirement**: MONTH, BUY, ADV — lacunas da rodada 1.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.

@@ -4,7 +4,9 @@ from pathlib import Path
 number, result, *tests = sys.argv[1:]
 p=Path('.specs/features/controle-familiar/tasks.md')
 s=p.read_text(); start=s.index(f'### T{number}:'); end=s.find('\n### T',start+1)
-if end<0:end=s.index('\n## Task Granularity Check',start)
+if end<0:
+    end=s.find('\n## ',start)
+    if end<0:end=len(s)
 block=s[start:end]; requirement=next(line for line in block.splitlines() if line.startswith('- **Requirement**'))
 s=s[:start]+block.replace('- **Status**: Pending.',f'- **Status**: Complete — {result}.')+s[end:];p.write_text(s)
 p=Path('.specs/features/controle-familiar/execution.md')

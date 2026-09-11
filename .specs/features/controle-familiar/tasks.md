@@ -592,4 +592,8 @@ Ferramentas propostas para todas as tarefas: terminal/edição local; navegador/
 ### T35: Completar evidências de interface móvel
 - **Requirement**: MONTH, BUY, ADV — lacunas da rodada 1.
 - **Done when**: dimensões de toque, prévia completa, aviso e histórico persistido têm verificação de interface.
-- **Status**: Pending.
+- **Status**: Complete — 12 frontend unit, 19 E2E passed; build passed.
+
+## Correções — gates finais
+
+T35 usa suíte completa de navegador e build; fixture de origem local isolada entre testes, sem alterar o rate limit de produção. AUTH AC05 permanece testado no backend.
