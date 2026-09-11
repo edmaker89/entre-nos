@@ -9,7 +9,9 @@ export async function api<T=any>(path:string, options:RequestInit={}):Promise<T>
  let response:Response
  try {response=await fetch('/api/v1'+path,{...options,credentials:'same-origin',headers:{'Content-Type':'application/json',...(csrf?{'X-CSRF-Token':csrf}:{}),...options.headers}})}
  catch {throw new ApiError('Falha de conexão. Seus dados foram mantidos; tente salvar novamente.',0)}
- const data=await response.json()
+ let data:any
+ try{data=await response.json()}
+ catch{throw new ApiError('Não foi possível confirmar a resposta do servidor. Seus dados foram mantidos; tente novamente.',response.status>=500?response.status:0)}
  if(!response.ok){if(response.status===401){csrf=undefined;window.dispatchEvent(new Event('session-expired'))}throw new ApiError(data.message??'Não foi possível concluir.',response.status)}
  if(path==='/auth/login')csrf=data.csrf_token
  if(path==='/auth/logout'){csrf=undefined;pendingOperations.clear()}

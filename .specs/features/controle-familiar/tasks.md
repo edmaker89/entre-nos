@@ -597,3 +597,10 @@ Ferramentas propostas para todas as tarefas: terminal/edição local; navegador/
 ## Correções — gates finais
 
 T35 usa suíte completa de navegador e build; fixture de origem local isolada entre testes, sem alterar o rate limit de produção. AUTH AC05 permanece testado no backend.
+
+### T36: Tratar resposta interrompida do servidor
+- **Requirement**: DATA-01 AC04.
+- **Files**: client.ts, client.test.ts, tasks.md, execution.md.
+- **Done when**: resposta vazia durante indisponibilidade retorna mensagem em português e mantém chave na repetição.
+- **Gate**: frontend unit + build.
+- **Status**: Complete — 13 frontend unit tests and build passed.

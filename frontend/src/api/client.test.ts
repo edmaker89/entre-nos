@@ -33,3 +33,13 @@ it('DATA AC04 reuses an unfinished operation across new save handlers',async()=>
  expect(await createOperation('/recurrences','POST',{amount_cents:36000})()).toEqual({id:'another'})
  expect(fetch.mock.calls[3][1]!.headers).not.toEqual(retry.headers)
 })
+it('DATA AC04 interrupted response is explained and keeps retry identity',async()=>{
+ const fetch=vi.spyOn(globalThis,'fetch')
+ fetch.mockResolvedValueOnce(new Response(JSON.stringify({csrf_token:'csrf'})))
+ await api('/auth/login',{method:'POST'})
+ fetch.mockResolvedValueOnce(new Response('',{status:502}))
+ await expect(createOperation('/advances','POST',{amount_cents:108400})()).rejects.toMatchObject({status:502,message:'Não foi possível confirmar a resposta do servidor. Seus dados foram mantidos; tente novamente.'})
+ fetch.mockResolvedValueOnce(new Response(JSON.stringify({id:'a'})))
+ expect(await createOperation('/advances','POST',{amount_cents:108400})()).toEqual({id:'a'})
+ expect(fetch.mock.calls[1][1]!.headers).toEqual(fetch.mock.calls[2][1]!.headers)
+})
