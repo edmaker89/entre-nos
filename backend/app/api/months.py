@@ -15,6 +15,7 @@ from app.db.models import (
     AdvanceItem,
     MonthClosure,
     User,
+    Membership,
     now,
 )
 from app.domain.money import allocate
@@ -38,7 +39,13 @@ def month_data(db, family, month, person=None):
     materialize(db, family, month, 1)
     if person:
         member(db, family, person)
-    names = dict(db.execute(select(User.id, User.name)).all())
+    names = dict(
+        db.execute(
+            select(User.id, User.name)
+            .join(Membership, Membership.user_id == User.id)
+            .where(Membership.family_id == family)
+        ).all()
+    )
     shares = {}
     for s in db.scalars(select(Share).order_by(Share.position)):
         shares.setdefault(s.commitment_id, []).append({"user_id": s.user_id, "weight": s.weight})
@@ -105,7 +112,7 @@ def month_data(db, family, month, person=None):
             }
         )
     family_total = sum(i["amount_cents"] for i in items)
-    people = {}
+    people = {id: 0 for id in names}
     visible = []
     for item in items:
         portions = allocate(item["amount_cents"], [s["weight"] for s in item["shares"]])

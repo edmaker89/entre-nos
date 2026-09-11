@@ -587,7 +587,7 @@ Ferramentas propostas para todas as tarefas: terminal/edição local; navegador/
 ### T34: Completar evidências dos fluxos financeiros
 - **Requirement**: FAM, CARD, BUY, BILL, SETTLE, ADV, MIG, DATA — lacunas da rodada 1.
 - **Done when**: asserções dos resultados compostos, isolamento, rollback e concorrência passam nas rotas reais.
-- **Status**: Pending.
+- **Status**: Complete — 73 backend tests passed; lint and Alembic check passed.
 
 ### T35: Completar evidências de interface móvel
 - **Requirement**: MONTH, BUY, ADV — lacunas da rodada 1.

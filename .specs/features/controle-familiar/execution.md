@@ -554,3 +554,109 @@ Gate: 47 backend, 12 frontend unit, 11 E2E passed; lint and build passed.
 | backend/tests/integration/test_commitments.py:88 — `assert client.get("/api/v1/commitments").json() == []` | Critérios da tarefa acima; valor esperado literal da especificação |
 
 Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
+
+## T34
+
+Gate: 73 backend tests passed; lint and Alembic check passed.
+- **Requirement**: FAM, CARD, BUY, BILL, SETTLE, ADV, MIG, DATA — lacunas da rodada 1.
+
+| Evidência de asserção | Requisito / resultado |
+| --- | --- |
+| backend/tests/integration/test_acceptance_edges.py:31 — `assert response.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:64 — `assert get(member, f"/commitments/{c['id']}") == c` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:75 — `assert response.status_code in (401, 404)` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:76 — `assert "Household private purchase" not in response.text` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:77 — `assert get(client, f"/commitments/{c['id']}") == c` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:80 — `assert write(session, "/auth/logout").status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:81 — `assert session.get(f"/api/v1/commitments/{c['id']}").status_code == 401` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:82 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:88 — `assert get(session, f"/commitments/{c['id']}") == c` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:102 — `assert [p["month"] for p in c["installments"]] == months` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:103 — `assert [p["amount_cents"] for p in c["installments"]] == [10000] * 3` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:104 — `assert get(client, "/cards")[0]["holder_id"] == client.user_id` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:106 — `assert {p["id"]: p["amount_cents"] for p in month["people"]} == {` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:110 — `assert month["totals"]["expected"] == 10000` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:125 — `assert [p["amount_cents"] for p in c["installments"]] == [3334, 3333, 3333]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:132 — `assert [s["amount_cents"] for s in item["shares"]] == expected` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:147 — `assert result.status_code == 503` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:149 — `assert db.scalars(select(Commitment)).all() == []` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:150 — `assert db.scalars(select(Share)).all() == []` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:151 — `assert db.scalars(select(Installment)).all() == []` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:170 — `assert [o["amount_cents"] for o in rows] == [160000] * 3` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:171 — `assert [o["estimated"] for o in rows] == [False] * 3` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:173 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:184 — `assert response.status_code == 409` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:185 — `assert response.json()["code"] == "paid"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:187 — `assert [o["month"] for o in actual] == ["2026-10-01", "2026-11-01", "2026-12-01"]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:188 — `assert actual[-1]["paid_at"] == "2026-12-05"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:203 — `assert [(p["number"], p["month"], p["amount_cents"]) for p in c["installments"]] == [` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:211 — `assert [(p["number"], p["month"], p["paid_at"]) for p in gap["installments"]] == [` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:216 — `assert (gap["original_count"], gap["pending_count"], gap["imported"]) == (48, 3, True)` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:218 — `assert write(client, "/commitments/import", {**body, "numbers": numbers}).status_code == 422` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:219 — `assert len(get(client, "/commitments")) == 2` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:230 — `assert [p["month"] for p in shifted["installments"]] == [` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:235 — `assert [p["amount_cents"] for p in shifted["installments"]] == [10000] * 3` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:236 — `assert shifted["shares"] == c["shares"]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:241 — `assert result.status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:242 — `assert get(client, "/months/2026-11")["totals"]["expected"] == 0` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:244 — `assert db.get(Commitment, c["id"]).deleted_at is not None` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:245 — `assert all(p.deleted_at is not None for p in db.scalars(select(Installment)))` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:270 — `assert sorted(r.status_code for r in responses) == [200, 409]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:273 — `assert len(plans) == (1 if responses[0].status_code == 200 or op == "advance" else 0)` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:274 — `assert after["pending_count"] == (35 if plans else 34)` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:275 — `assert [p["number"] for p in after["installments"]] == list(range(10, 45))` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:276 — `assert after["installments"][0]["amount_cents"] == 191900` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:291 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:298 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:307 — `assert write(client, "/advances", advance_body(c, 10000)).status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:311 — `assert write(client, f"/cycles/{cycle['id']}/preview-close", body).json()["changes"] == []` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:312 — `assert write(client, f"/cycles/{cycle['id']}/close", body, "patch").status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:313 — `assert get(client, f"/commitments/{c['id']}") == before` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:322 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:331 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:335 — `assert get(client, f"/commitments/{c['id']}")["installments"][0]["needs_review"] is False` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:337 — `assert get(client, f"/cards/{card}/cycles")[0]["confirmed"] is False` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:339 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:367 — `assert [p["amount_cents"] for p in after["installments"]] == [10000] + parts` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:368 — `assert [p["month"] for p in after["installments"]] == ["2026-10-01"] * 3` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:369 — `assert get(client, "/months/2026-11")["totals"]["expected"] == 0` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:370 — `assert get(client, "/months/2026-12")["totals"]["expected"] == 0` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:372 — `assert monthly["totals"]["expected"] == 10000 + amount` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:381 — `assert [by_number[n] for n in [1, 2, 3]] == expected` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:388 — `assert get(client, "/months/2026-10")["totals"] == {` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:394 — `assert current["pending_count"] == 0` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:400 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:409 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:417 — `assert plan["state"] == "paid"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:418 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:422 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:426 — `assert get(client, "/advances")[0]["state"] == "planned"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:427 — `assert all(p["paid_at"] is None for p in get(client, f"/commitments/{c['id']}")["installments"])` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:441 — `assert write(client, "/advances", {**body, **change}).status_code == 422` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:449 — `assert write(client, "/advances", advance_body(current, 10000)).json()["code"] == "paid_cycle"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:459 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:464 — `assert (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:469 — `assert (restored["cycle_id"], restored["month"], restored["amount_cents"]) == (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:481 — `assert month["totals"]["expected"] == 300300` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:482 — `assert len(month["items"]) == 2` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:483 — `assert {i["commitment_id"] for i in month["items"]} == {c["id"]}` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:484 — `assert sorted(` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:487 — `assert get(client, "/months/2029-08")["totals"]["expected"] == 0` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:494 — `assert write(client, "/months/2026-10/close", {}).status_code == 409` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:495 — `assert get(client, "/advances")[0]["state"] == "planned"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:500 — `assert [p["number"] for p in after["installments"]] == list(range(10, 45))` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:501 — `assert (after["installments"][0]["number"], after["installments"][0]["amount_cents"]) == (` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:505 — `assert (after["last_open_number"], after["original_count"]) == (43, 48)` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:515 — `assert get(client, "/months/default")["month"] == "2026-10"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:516 — `assert write(client, "/months/2026-10/close", {}).status_code == 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:517 — `assert get(client, "/months/default")["month"] == "2026-11"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:519 — `assert get(client, "/months/default")["month"] == "2026-10"` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:534 — `assert result.status_code == 422` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:535 — `assert any(field in value for value in result.json()["fields"])` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:536 — `assert get(client, "/commitments") == []` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:542 — `assert c["description"] == "x" * 200` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:553 — `assert result.status_code == 422` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:554 — `assert result.json()["fields"] == ["total_cents"]` | Critérios da tarefa acima; valor esperado literal da especificação |
+| backend/tests/integration/test_acceptance_edges.py:555 — `assert len(get(client, "/commitments")) == 1` | Critérios da tarefa acima; valor esperado literal da especificação |
+
+Mapa reverso: asserções listadas pertencem aos critérios desta tarefa; revisadas quanto a suficiência, necessidade e resultados persistidos. Nenhum teste removido ou ignorado.
