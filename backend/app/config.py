@@ -8,6 +8,10 @@ class Settings(BaseSettings):
     secure_cookies: bool = False
     session_absolute_seconds: int = 7 * 86400
     session_idle_seconds: int = 86400
+    email_provider: str = "memory"
+    resend_api_key: str | None = None
+    email_from: str = "Entre Nós <noreply@edmaker.dev.br>"
+    email_timeout_seconds: float = 5.0
 
 
 settings = Settings()
