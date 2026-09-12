@@ -1,6 +1,14 @@
 from collections.abc import Sequence
+import hashlib
+import json
 
 from app.domain.money import MAX_CENTS, allocate
+
+
+def responsibility_preview_hash(payload: dict) -> str:
+    """Fingerprint the exact responsibility read-set shown to the user."""
+    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(canonical.encode()).hexdigest()
 
 
 def allocate_aggregate_split(

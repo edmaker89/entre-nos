@@ -3,7 +3,7 @@
 import pytest
 
 from app.domain.money import MAX_CENTS
-from app.domain.responsibility import allocate_aggregate_split
+from app.domain.responsibility import allocate_aggregate_split, responsibility_preview_hash
 
 
 def totals(matrix):
@@ -90,3 +90,21 @@ def test_inputs_are_not_mutated():
     allocate_aggregate_split(obligations, shares)
     assert obligations == [50, 50]
     assert shares == [("douglas", 25), ("vanessa", 75)]
+
+
+def test_preview_hash_is_canonical_and_sensitive_to_the_read_set():
+    first = {
+        "source_version": 3,
+        "installments": [{"id": "i1", "version": 2, "amount_cents": 100}],
+        "shares": [{"user_id": "vanessa", "weight": 100}],
+    }
+    reordered = {
+        "shares": [{"weight": 100, "user_id": "vanessa"}],
+        "installments": [{"amount_cents": 100, "version": 2, "id": "i1"}],
+        "source_version": 3,
+    }
+    changed = {**first, "source_version": 4}
+
+    assert responsibility_preview_hash(first) == responsibility_preview_hash(reordered)
+    assert responsibility_preview_hash(first) != responsibility_preview_hash(changed)
+    assert len(responsibility_preview_hash(first)) == 64

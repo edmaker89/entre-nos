@@ -1,13 +1,22 @@
 from datetime import date
 from fastapi import APIRouter, Request
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from sqlalchemy import select
 from app.api.auth import DB, FamilyID
-from app.api.common import get_row, operation, reopen_month
-from app.api.commitments import details, ensure_cycle
-from app.db.models import Commitment, Installment, Advance, Card, now
+from app.api.common import get_row, member, operation, reopen_month
+from app.api.commitments import ShareInput, details, ensure_cycle
+from app.db.models import (
+    Commitment,
+    Installment,
+    InstallmentResponsibilityShare,
+    Advance,
+    AdvanceItem,
+    Card,
+    now,
+)
 from app.db.unit_of_work import check_version
 from app.domain.cycles import month_start, add_months
+from app.domain.responsibility import allocate_aggregate_split, responsibility_preview_hash
 from app.errors import AppError
 
 router = APIRouter(prefix="/api/v1/commitments", tags=["changes"])
@@ -21,6 +30,132 @@ class Shift(BaseModel):
 class Edit(BaseModel):
     version: int = Field(ge=1)
     description: str = Field(min_length=1, max_length=200)
+
+
+class ResponsibilityChange(BaseModel):
+    version: int = Field(ge=1)
+    shares: list[ShareInput] = Field(min_length=1, max_length=20)
+
+    @model_validator(mode="after")
+    def valid(self):
+        if len({share.user_id for share in self.shares}) != len(self.shares):
+            raise ValueError("Responsável repetido.")
+        if sum(share.weight for share in self.shares) <= 0:
+            raise ValueError("Divisão inválida.")
+        return self
+
+
+def responsibility_preview_data(db, family, id, body):
+    commitment = get_row(db, Commitment, id)
+    if commitment.version != body.version:
+        raise AppError("version_conflict", "Registro alterado. Recarregue.")
+    for share in body.shares:
+        member(db, family, share.user_id)
+    parts = db.scalars(
+        select(Installment)
+        .where(
+            Installment.commitment_id == id,
+            Installment.deleted_at.is_(None),
+            Installment.paid_at.is_(None),
+        )
+        .order_by(Installment.number)
+    ).all()
+    if not parts:
+        raise AppError("no_open_obligations", "Este lançamento não possui parcelas abertas.")
+    total = sum(part.amount_cents for part in parts)
+    difference = total - sum(share.weight for share in body.shares)
+    if difference:
+        raise AppError(
+            "invalid_split",
+            "A divisão deve somar exatamente o total aberto.",
+            422,
+            fields=["shares"],
+            difference_cents=difference,
+        )
+    snapshots = {}
+    for snapshot in db.scalars(
+        select(InstallmentResponsibilityShare)
+        .where(
+            InstallmentResponsibilityShare.installment_id.in_([part.id for part in parts])
+        )
+        .order_by(
+            InstallmentResponsibilityShare.installment_id,
+            InstallmentResponsibilityShare.position,
+        )
+    ):
+        snapshots.setdefault(snapshot.installment_id, []).append(
+            {"user_id": snapshot.user_id, "weight": snapshot.weight}
+        )
+    if any(part.id not in snapshots for part in parts):
+        raise AppError("invalid_state", "Responsabilidade da parcela não encontrada.")
+    matrix = allocate_aggregate_split(
+        [part.amount_cents for part in parts],
+        [(share.user_id, share.weight) for share in body.shares],
+    )
+    plans = (
+        db.scalars(
+            select(Advance)
+            .join(AdvanceItem, AdvanceItem.advance_id == Advance.id)
+            .where(
+                AdvanceItem.installment_id.in_([part.id for part in parts]),
+                Advance.state == "planned",
+            )
+            .order_by(Advance.created_at)
+        )
+        .unique()
+        .all()
+    )
+    planned_advances = []
+    part_order = {part.id: index for index, part in enumerate(parts)}
+    for plan in plans:
+        ids = db.scalars(
+            select(AdvanceItem.installment_id).where(
+                AdvanceItem.advance_id == plan.id,
+                AdvanceItem.installment_id.in_(part_order),
+            )
+        ).all()
+        planned_advances.append(
+            {
+                "id": plan.id,
+                "month": plan.month.isoformat(),
+                "amount_cents": plan.amount_cents,
+                "installment_ids": sorted(ids, key=part_order.get),
+            }
+        )
+    installments_preview = [
+        {
+            "id": part.id,
+            "number": part.number,
+            "month": part.month.isoformat(),
+            "amount_cents": part.amount_cents,
+            "version": part.version,
+            "before": snapshots[part.id],
+            "after": [
+                {"user_id": user_id, "weight": weight} for user_id, weight in row
+            ],
+        }
+        for part, row in zip(parts, matrix, strict=True)
+    ]
+    read_set = {
+        "source_version": commitment.version,
+        "installments": installments_preview,
+        "planned_advances": planned_advances,
+        "shares": [share.model_dump() for share in body.shares],
+    }
+    return {
+        **read_set,
+        "preview_hash": responsibility_preview_hash(read_set),
+        "open_total_cents": total,
+        "open_installment_count": len(parts),
+        "months": sorted({part.month.strftime("%Y-%m") for part in parts}),
+    }
+
+
+@router.post("/{id}/responsibility-preview")
+def responsibility_preview(
+    id: str, body: ResponsibilityChange, db: DB, family: FamilyID
+):
+    return responsibility_preview_data(db, family, id, body)
 
 
 def editable(db, id):
