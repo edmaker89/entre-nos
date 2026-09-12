@@ -12,8 +12,9 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from app.config import settings
+from app.api.permissions import resolve_family
 from app.db.models import User, Membership, Session as LoginSession, LoginWindow, now
-from app.db.unit_of_work import engine, family_context
+from app.db.unit_of_work import engine
 from app.errors import AppError
 
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
@@ -39,7 +40,7 @@ class Login(BaseModel):
     password: str = Field(min_length=1, max_length=200)
 
 
-def current(request: Request, db: DB):
+def current_user(request: Request, db: DB):
     token = request.cookies.get("expense_session", "")
     session = db.scalar(select(LoginSession).where(LoginSession.token_hash == digest(token)))
     time = now()
@@ -53,11 +54,6 @@ def current(request: Request, db: DB):
     user = db.get(User, session.user_id)
     if not user or not user.active:
         raise AppError("unauthorized", "Entre para continuar.", 401)
-    member = db.scalar(
-        select(Membership).where(Membership.user_id == user.id).order_by(Membership.family_id)
-    )
-    if not member:
-        raise AppError("unauthorized", "Usuário sem família.", 401)
     if request.method not in ("GET", "HEAD", "OPTIONS"):
         origin = request.headers.get("origin")
         csrf = request.headers.get("x-csrf-token", "")
@@ -66,14 +62,19 @@ def current(request: Request, db: DB):
         ):
             raise AppError("csrf", "Atualize a página e tente novamente.", 403)
     session.last_seen = time
-    family_context(db, member.family_id, lock=request.method not in ("GET", "HEAD", "OPTIONS"))
     request.state.user = user
     request.state.session = session
-    request.state.family_id = member.family_id
-    return member.family_id
+    return user
 
 
-FamilyID = Annotated[str, Depends(current, scope="function")]
+CurrentUser = Annotated[User, Depends(current_user, scope="function")]
+
+
+def current_family(request: Request, db: DB, user: CurrentUser) -> str:
+    return resolve_family(request, db, user)
+
+
+FamilyID = Annotated[str, Depends(current_family, scope="function")]
 
 
 @router.post("/login")
@@ -136,12 +137,12 @@ def me(request: Request, db: DB, family: FamilyID):
 
 
 @router.get("/csrf")
-def csrf(request: Request, family: FamilyID):
+def csrf(request: Request, user: CurrentUser):
     return {"csrf_token": digest(request.cookies["expense_session"] + ":csrf")}
 
 
 @router.post("/logout")
-def logout(request: Request, response: Response, family: FamilyID):
+def logout(request: Request, response: Response, user: CurrentUser):
     request.state.session.revoked = True
     response.delete_cookie("expense_session", path="/")
     return {"ok": True}

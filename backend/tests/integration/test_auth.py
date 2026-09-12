@@ -27,6 +27,25 @@ def account():
         return u.email, u.id
 
 
+def account_without_family():
+    token = str(uuid4())
+    with Session(engine) as s, s.begin():
+        user = User(
+            email=f"{token}@test.local",
+            name="Convidado",
+            password_hash=passwords.hash("testing-password"),
+        )
+        s.add(user)
+        s.flush()
+        return user.email, user.id
+
+
+def login(client, email):
+    return client.post(
+        "/api/v1/auth/login", json={"email": email, "password": "testing-password"}
+    )
+
+
 def test_cookie_login_csrf_logout():
     email, user = account()
     with TestClient(app, client=(str(uuid4()), 123)) as c:
@@ -120,3 +139,65 @@ def test_login_window_resets():
             ).status_code
             == 401
         )
+
+
+def test_user_without_family_can_keep_session_and_fetch_csrf():
+    email, user_id = account_without_family()
+    with TestClient(app, client=(str(uuid4()), 123)) as client:
+        response = login(client, email)
+        assert response.status_code == 200
+        assert response.json()["user"]["id"] == user_id
+        csrf = client.get("/api/v1/auth/csrf")
+        assert csrf.status_code == 200
+        assert len(csrf.json()["csrf_token"]) == 64
+
+
+def test_user_without_family_can_logout_with_csrf():
+    email, _ = account_without_family()
+    with TestClient(app, client=(str(uuid4()), 123)) as client:
+        csrf = login(client, email).json()["csrf_token"]
+        response = client.post("/api/v1/auth/logout", headers={"X-CSRF-Token": csrf})
+        assert response.status_code == 200
+        assert response.json() == {"ok": True}
+
+
+def test_financial_route_still_requires_a_family():
+    email, _ = account_without_family()
+    with TestClient(app, client=(str(uuid4()), 123)) as client:
+        login(client, email)
+        response = client.get("/api/v1/cards")
+        assert response.status_code == 403
+        assert response.json()["code"] == "family_required"
+
+
+def test_exactly_one_membership_resolves_family_context():
+    email, user_id = account()
+    with TestClient(app, client=(str(uuid4()), 123)) as client:
+        login(client, email)
+        response = client.get("/api/v1/auth/me")
+        assert response.status_code == 200
+        assert response.json()["user"]["id"] == user_id
+        assert response.json()["family_id"]
+
+
+def test_multiple_memberships_are_rejected_instead_of_selecting_first():
+    email, user_id = account()
+    with Session(engine) as session, session.begin():
+        second = Family(name="Second family")
+        session.add(second)
+        session.flush()
+        session.add(Membership(user_id=user_id, family_id=second.id))
+    with TestClient(app, client=(str(uuid4()), 123)) as client:
+        login(client, email)
+        response = client.get("/api/v1/auth/me")
+        assert response.status_code == 409
+        assert response.json()["code"] == "multiple_families"
+
+
+def test_current_user_keeps_csrf_protection_without_family():
+    email, _ = account_without_family()
+    with TestClient(app, client=(str(uuid4()), 123)) as client:
+        login(client, email)
+        response = client.post("/api/v1/auth/logout")
+        assert response.status_code == 403
+        assert response.json()["code"] == "csrf"
