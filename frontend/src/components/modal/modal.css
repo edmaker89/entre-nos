@@ -1,0 +1,80 @@
+.modal {
+  border: 0;
+  padding: 0;
+  width: min(640px, calc(100% - 32px));
+  max-width: 640px;
+  max-height: calc(100dvh - 32px);
+  overflow: hidden;
+  border-radius: 16px;
+  background: #fafbf8;
+  color: inherit;
+  box-shadow: 0 24px 80px #10261f40;
+}
+
+.modal::backdrop {
+  background: #15312880;
+}
+
+.modal__surface {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 32px);
+}
+
+.modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  padding: 24px 24px 0;
+}
+
+.modal__header p {
+  margin: 8px 0 0;
+}
+
+.modal__body {
+  min-width: 0;
+  overflow: auto;
+  padding: 24px;
+}
+
+.modal__footer {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 0 24px 24px;
+}
+
+.modal__error {
+  margin: 0 24px 16px;
+}
+
+@media (max-width: 480px) {
+  .modal {
+    width: calc(100% - 20px);
+    max-height: calc(100dvh - 20px);
+  }
+
+  .modal__surface {
+    max-height: calc(100dvh - 20px);
+  }
+
+  .modal__header {
+    padding: 20px 20px 0;
+  }
+
+  .modal__body {
+    padding: 20px;
+  }
+
+  .modal__footer {
+    padding: 0 20px 20px;
+  }
+
+  .modal__footer > button {
+    flex: 1 1 140px;
+  }
+}
