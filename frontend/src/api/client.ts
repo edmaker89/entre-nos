@@ -1,6 +1,17 @@
 let csrf:string|undefined
 const pendingOperations=new Map<string,string>()
-export class ApiError extends Error {constructor(message:string,public status:number){super(message)}}
+type ApiErrorDetails={code?:string;fields?:string[];difference_cents?:number;operation_id?:string}
+export class ApiError extends Error {
+ constructor(message:string,public status:number,details:ApiErrorDetails={}){
+  super(message)
+  this.name='ApiError'
+  Object.assign(this,details)
+ }
+ declare code?:string
+ declare fields?:string[]
+ declare difference_cents?:number
+ declare operation_id?:string
+}
 export async function api<T=any>(path:string, options:RequestInit={}):Promise<T>{
  const method=options.method??'GET'
  if(method!=='GET'&&!csrf&&path!=='/auth/login'){
@@ -11,8 +22,8 @@ export async function api<T=any>(path:string, options:RequestInit={}):Promise<T>
  catch {throw new ApiError('Falha de conexão. Seus dados foram mantidos; tente salvar novamente.',0)}
  let data:any
  try{data=await response.json()}
- catch{throw new ApiError('Não foi possível confirmar a resposta do servidor. Seus dados foram mantidos; tente novamente.',response.status>=500?response.status:0)}
- if(!response.ok){if(response.status===401){csrf=undefined;window.dispatchEvent(new Event('session-expired'))}throw new ApiError(data.message??'Não foi possível concluir.',response.status)}
+ catch{throw new ApiError('Não foi possível confirmar a resposta do servidor. Seus dados foram mantidos; tente novamente.',response.status)}
+ if(!response.ok){if(response.status===401){csrf=undefined;window.dispatchEvent(new Event('session-expired'))}throw new ApiError(data.message??'Não foi possível concluir.',response.status,{code:data.code,fields:data.fields,difference_cents:data.difference_cents,operation_id:data.operation_id})}
  if(path==='/auth/login')csrf=data.csrf_token
  if(path==='/auth/logout'){csrf=undefined;pendingOperations.clear()}
  return data
