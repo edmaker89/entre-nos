@@ -276,6 +276,10 @@ def upgrade() -> None:
         sa.CheckConstraint("count > 0", name="ck_auth_rate_limit_count"),
         sa.PrimaryKeyConstraint("scope", "key_hash"),
     )
+    op.execute(
+        "GRANT SELECT, INSERT, UPDATE, DELETE ON "
+        "password_reset_tokens, auth_rate_limit_windows TO expense_app"
+    )
 
     op.execute(
         """

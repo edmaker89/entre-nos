@@ -92,6 +92,18 @@ def test_family_tables_are_forced_through_rls(engine):
     assert all(row.relrowsecurity and row.relforcerowsecurity for row in rows)
 
 
+def test_runtime_role_can_use_global_auth_tables(engine):
+    with engine.connect() as connection:
+        privileges = connection.execute(
+            text(
+                "SELECT has_table_privilege('expense_app', table_name, privilege) "
+                "FROM unnest(ARRAY['password_reset_tokens','auth_rate_limit_windows']) table_name, "
+                "unnest(ARRAY['SELECT','INSERT','UPDATE','DELETE']) privilege"
+            )
+        ).scalars().all()
+    assert privileges == [True] * 8
+
+
 def test_family_invite_rls_hides_and_blocks_foreign_rows(db):
     db.execute(
         text(
