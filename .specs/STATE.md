@@ -42,6 +42,14 @@
 - **Date**: 2026-09-10
 - **Status**: active
 
+### AD-006
+- **Decision**: Representar a responsabilidade financeira com snapshots explícitos por parcela e ocorrência; compromisso e recorrência permanecem templates apenas para obrigações futuras.
+- **Reason**: Usuário aprovou a abordagem A, que permite transferir somente obrigações abertas sem reescrever histórico pago.
+- **Trade-off**: O banco terá mais linhas e a migração precisa fazer backfill e validar equivalência de totais.
+- **Scope**: Domínio financeiro, consultas mensais, edições, transferências, recorrências e antecipações.
+- **Date**: 2026-09-12
+- **Status**: active
+
 ## Handoff
 
 - **Feature**: controle-familiar — .specs/features/controle-familiar/
