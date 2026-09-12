@@ -1,7 +1,7 @@
 from datetime import date
 from fastapi import APIRouter, Request
 from pydantic import BaseModel, Field, model_validator
-from sqlalchemy import select
+from sqlalchemy import delete as sql_delete, select
 from app.api.auth import DB, FamilyID
 from app.api.common import get_row, member, operation, reopen_month
 from app.api.commitments import ShareInput, details, ensure_cycle
@@ -12,6 +12,7 @@ from app.db.models import (
     Advance,
     AdvanceItem,
     Card,
+    Audit,
     now,
 )
 from app.db.unit_of_work import check_version
@@ -42,6 +43,17 @@ class ResponsibilityChange(BaseModel):
             raise ValueError("Responsável repetido.")
         if sum(share.weight for share in self.shares) <= 0:
             raise ValueError("Divisão inválida.")
+        return self
+
+
+class ResponsibilityApply(BaseModel):
+    source_version: int = Field(ge=1)
+    preview_hash: str = Field(min_length=64, max_length=64, pattern=r"^[0-9a-f]{64}$")
+    shares: list[ShareInput] = Field(min_length=1, max_length=20)
+
+    @model_validator(mode="after")
+    def valid(self):
+        ResponsibilityChange(version=self.source_version, shares=self.shares)
         return self
 
 
@@ -156,6 +168,78 @@ def responsibility_preview(
     id: str, body: ResponsibilityChange, db: DB, family: FamilyID
 ):
     return responsibility_preview_data(db, family, id, body)
+
+
+def replace_open_snapshots(db, family, preview_data):
+    installment_ids = [part["id"] for part in preview_data["installments"]]
+    db.execute(
+        sql_delete(InstallmentResponsibilityShare).where(
+            InstallmentResponsibilityShare.installment_id.in_(installment_ids)
+        )
+    )
+    for part in preview_data["installments"]:
+        for position, share in enumerate(part["after"]):
+            db.add(
+                InstallmentResponsibilityShare(
+                    family_id=family,
+                    installment_id=part["id"],
+                    user_id=share["user_id"],
+                    weight=share["weight"],
+                    position=position,
+                )
+            )
+    db.flush()
+
+
+@router.post("/{id}/responsibility")
+def transfer_responsibility(
+    id: str,
+    body: ResponsibilityApply,
+    request: Request,
+    db: DB,
+    family: FamilyID,
+):
+    def action():
+        commitment = db.scalar(
+            select(Commitment)
+            .where(Commitment.id == id, Commitment.deleted_at.is_(None))
+            .with_for_update()
+        )
+        if commitment is None:
+            raise AppError("not_found", "Registro não encontrado.", 404)
+        preview_data = responsibility_preview_data(
+            db,
+            family,
+            id,
+            ResponsibilityChange(version=body.source_version, shares=body.shares),
+        )
+        if preview_data["preview_hash"] != body.preview_hash:
+            raise AppError(
+                "version_conflict",
+                "A prévia não representa mais as parcelas abertas. Recarregue.",
+            )
+        check_version(commitment, body.source_version)
+        replace_open_snapshots(db, family, preview_data)
+        for part in preview_data["installments"]:
+            reopen_month(db, family, date.fromisoformat(part["month"]))
+        db.add(
+            Audit(
+                family_id=family,
+                actor_id=request.state.user.id,
+                operation="transfer_responsibility",
+                entity_id=commitment.id,
+                details={
+                    "fields": ["responsibility"],
+                    "installment_ids": [
+                        part["id"] for part in preview_data["installments"]
+                    ],
+                },
+            )
+        )
+        db.flush()
+        return details(db, commitment)
+
+    return operation(db, family, request, body.model_dump(), action)
 
 
 def editable(db, id):
