@@ -10,6 +10,7 @@ from app.db.models import (
     Installment,
     InstallmentResponsibilityShare,
     Occurrence,
+    OccurrenceResponsibilityShare,
     Recurrence,
     Advance,
     AdvanceItem,
@@ -54,6 +55,16 @@ def month_data(db, family, month, person=None):
         )
     ):
         installment_shares.setdefault(snapshot.installment_id, []).append(
+            {"user_id": snapshot.user_id, "weight": snapshot.weight}
+        )
+    occurrence_shares = {}
+    for snapshot in db.scalars(
+        select(OccurrenceResponsibilityShare).order_by(
+            OccurrenceResponsibilityShare.occurrence_id,
+            OccurrenceResponsibilityShare.position,
+        )
+    ):
+        occurrence_shares.setdefault(snapshot.occurrence_id, []).append(
             {"user_id": snapshot.user_id, "weight": snapshot.weight}
         )
     advances = {
@@ -113,7 +124,7 @@ def month_data(db, family, month, person=None):
                 "paid_at": o.paid_at.isoformat() if o.paid_at else None,
                 "version": o.version,
                 "estimated": o.estimated,
-                "shares": r.shares,
+                "shares": occurrence_shares.get(o.id, []),
                 "cycle_id": None,
                 "card_id": None,
             }

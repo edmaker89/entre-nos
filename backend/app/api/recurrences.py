@@ -5,10 +5,10 @@ from sqlalchemy import select
 from app.api.auth import DB, FamilyID
 from app.api.common import get_row, serialize, operation, member, reopen_month
 from app.api.commitments import ShareInput
-from app.db.models import Recurrence, Occurrence, now
+from app.db.models import Recurrence, Occurrence, OccurrenceResponsibilityShare, now
 from app.db.unit_of_work import check_version, family_context
 from app.domain.cycles import month_start, add_months, on_day
-from app.domain.money import MAX_CENTS
+from app.domain.money import MAX_CENTS, allocate
 from app.errors import AppError
 
 router = APIRouter(prefix="/api/v1", tags=["recurrences"])
@@ -68,8 +68,7 @@ def materialize(db, family, start, count):
                 .order_by(Occurrence.month.desc())
             )
             amount = latest.amount_cents if rule.variable and latest else rule.amount_cents
-            db.add(
-                Occurrence(
+            occurrence = Occurrence(
                     family_id=family,
                     recurrence_id=rule.id,
                     month=month,
@@ -77,7 +76,23 @@ def materialize(db, family, start, count):
                     amount_cents=amount,
                     estimated=rule.variable,
                 )
-            )
+            db.add(occurrence)
+            db.flush()
+            weights = allocate(amount, [share["weight"] for share in rule.shares])
+            for position, (share, weight) in enumerate(
+                zip(rule.shares, weights, strict=True)
+            ):
+                if not weight:
+                    continue
+                db.add(
+                    OccurrenceResponsibilityShare(
+                        family_id=family,
+                        occurrence_id=occurrence.id,
+                        user_id=share["user_id"],
+                        weight=weight,
+                        position=position,
+                    )
+                )
             reopen_month(db, family, month)
     db.flush()
 
