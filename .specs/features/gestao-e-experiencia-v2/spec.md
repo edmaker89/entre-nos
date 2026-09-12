@@ -234,15 +234,15 @@ As decisões D01–D12 foram aprovadas pelo usuário em 2026-09-12; D11 recebeu 
 
 | Requisito | Prioridade | Estado |
 | --- | --- | --- |
-| EDIT-01 | P1 | Aprovado; segue para Design |
-| EDIT-02 | P1 | Aprovado; segue para Design |
-| MODAL-01 | P1 | Aprovado; segue para Design |
-| FAMILY-01 | P1 | Aprovado; segue para Design |
-| INVITE-01 | P1 | Aprovado; segue para Design |
-| PROFILE-01 | P1 | Aprovado; segue para Design |
-| AUTH-RESET-01 | P1 | Aprovado; segue para Design |
-| CARD-UX-01 | P1 | Aprovado; segue para Design |
-| CARD-CATALOG-01 | P1 | Aprovado; segue para Design |
+| EDIT-01 | P1 | Em implementação; fundação T1/T2/T6 concluída |
+| EDIT-02 | P1 | Em implementação; contrato de erro T6 concluído |
+| MODAL-01 | P1 | Em implementação; primitive T7 concluído |
+| FAMILY-01 | P1 | Em implementação; esquema/autenticação T1/T3 concluídos |
+| INVITE-01 | P1 | Em implementação; fundação T1/T3/T4 concluída |
+| PROFILE-01 | P1 | Em implementação; esquema/autenticação T1/T3 concluídos |
+| AUTH-RESET-01 | P1 | Em implementação; fundação T1/T4/T5 concluída |
+| CARD-UX-01 | P1 | Planejada; começa na Fase 6 |
+| CARD-CATALOG-01 | P1 | Em implementação; esquema T1 concluído |
 
 **Cobertura:** 9 requisitos, todos mapeados; 0 sem tratamento.
 

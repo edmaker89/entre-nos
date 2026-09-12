@@ -7,7 +7,7 @@ Implementar estas tarefas com a skill `tlc-spec-driven`: ativá-la por nome e se
 Se a skill não puder ser ativada, interromper a execução e informar o usuário.
 
 **Design:** `.specs/features/gestao-e-experiencia-v2/design.md`  
-**Status:** In Progress — tarefas, matriz, ferramentas e subagentes aprovados em 2026-09-12  
+**Status:** In Progress — Fase 1 (T1–T7) concluída; próxima tarefa T8
 **Total:** 36 tarefas em 6 fases
 
 ---
@@ -94,6 +94,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T1: Criar esquema relacional e migração de backfill
 
+**Status:** ✅ Concluída — `8b00577` + correção de privilégio `81b659f`
+
 **What:** Adicionar modelos e uma revisão Alembic para roles/código/versões, campos de cartão, snapshots, convites, resets e rate limits, incluindo RLS e backfill validado.  
 **Where:** `backend/app/db/models.py`, `backend/alembic/versions/*_experience_v2.py`, `backend/tests/integration/test_schema.py`  
 **Depends on:** None  
@@ -106,6 +108,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 **Commit:** `feat(db): add experience v2 schema and backfill`
 
 ### T2: Implementar distribuição matricial de responsabilidade
+
+**Status:** ✅ Concluída — `9f467b8`
 
 **What:** Criar funções puras que transformam divisão agregada em pesos por obrigação com somas exatas por linha e coluna.  
 **Where:** `backend/app/domain/responsibility.py`, `backend/tests/unit/test_responsibility.py`  
@@ -120,6 +124,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T3: Separar autenticação de contexto familiar
 
+**Status:** ✅ Concluída — `d4d2a99`
+
 **What:** Extrair `CurrentUser` de `FamilyID`, manter CSRF/sessão e rejeitar múltiplas memberships em vez de escolher a primeira.  
 **Where:** `backend/app/api/auth.py`, `backend/app/api/permissions.py`, `backend/tests/integration/test_auth.py`  
 **Depends on:** T2  
@@ -132,6 +138,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 **Commit:** `refactor(auth): separate user session from family context`
 
 ### T4: Centralizar política de senha e rate limit seguro
+
+**Status:** ✅ Concluída — `236c399`
 
 **What:** Implementar política 15–200, comparação com hash atual e janelas atômicas com chaves HMAC para email/origem/família.  
 **Where:** `backend/app/domain/passwords.py`, `backend/app/domain/rate_limits.py`, testes unitários e de integração correspondentes  
@@ -146,6 +154,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T5: Criar adaptador EmailSender e implementação Resend
 
+**Status:** ✅ Concluída — `0510820`
+
 **What:** Adicionar interface, templates texto/HTML, cliente Resend com timeout/idempotência e provider em memória para testes.  
 **Where:** `backend/app/email/`, `backend/app/config.py`, `backend/pyproject.toml`, lock/requirements, `backend/tests/unit/test_email.py`  
 **Depends on:** T4  
@@ -159,6 +169,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T6: Enriquecer o contrato de erro do cliente React
 
+**Status:** ✅ Concluída — `974297e`
+
 **What:** Fazer `ApiError` preservar `code`, `fields`, `difference_cents` e `operation_id` sem quebrar retry idempotente.  
 **Where:** `frontend/src/api/client.ts`, `frontend/src/api/client.test.ts`  
 **Depends on:** T5  
@@ -171,6 +183,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 **Commit:** `refactor(web): preserve structured api errors`
 
 ### T7: Criar o primitive acessível de modal
+
+**Status:** ✅ Concluída — `cdeac1d`
 
 **What:** Entregar `Modal`, header/body/footer/close, erro, confirmação e guarda de alterações sobre `<dialog>`.  
 **Where:** `frontend/src/components/modal/`, estilos e testes colocalizados  

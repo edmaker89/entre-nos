@@ -52,17 +52,12 @@
 
 ## Handoff
 
-- **Feature**: controle-familiar — .specs/features/controle-familiar/
-- **Phase / Task**: Implementação e verificação automatizada concluídas; UAT humano pendente.
-- **Completed**: T1–T36 em commits atômicos. Verifier independente: PASS, 58/58 critérios, 105 testes (73 backend + 13 frontend unit + 19 E2E), seis mutantes detectados. Lint, build e Alembic check passaram.
-- **Deploy local**: Compose expense-flow-validation em http://localhost:8089 atualizado; backup/restauração e persistência após restart verificados. VM remota não foi alterada.
-- **Última solicitação**: usuário pediu limpeza do banco da aplicação local e criação de seu acesso. Limpeza executada preservando Alembic; usuário Douglas criado e login validado com totais zerados. Credenciais em .env.local-access, modo 600, ignorado pelo Git. A demonstração anterior foi removida.
-- **Backup pré-limpeza**: backups/before-local-reset-20260911-063912.dump (local, ignorado pelo Git).
-- **Next step**: Usuário testar aplicação vazia com seu acesso. Para implantação remota ainda faltam destino/acesso à VM e domínio/configuração HTTPS.
-- **Blockers**: Nenhum para uso local. Não executar smoke de seed no banco limpo sem necessidade; ele cria dados de teste.
-- **Branch**: main.
-- **Ambiente dev separado**: Postgres expense-flow-postgres localhost:55432 e API8000 permanecem para testes; não são o banco da aplicação8089.
-
-### UAT — ajuste visual dos cartões (2026-09-11)
-
-Usuário reportou botões brancos sobre branco no cartão escuro. Corrigido em22f9f84 com cores explícitas para texto/ícones, normal/hover. Build e QA navegador390/1440px passaram; Compose web atualizado. Feature pontual em .specs/features/card-button-contrast/.
+- **Feature**: gestao-e-experiencia-v2 — `.specs/features/gestao-e-experiencia-v2/`
+- **Phase / Task**: Fase 1 concluída; próxima tarefa T8 da Fase 2.
+- **Completed**: T1–T7 em commits atômicos; correção adicional de privilégios runtime em `81b659f`. Esquema/backfill, distribuição exata, autenticação pré-família, senha/rate limit, Resend, erros React e primitive de modal entregues.
+- **Verification**: Full Backend final com 137 testes, Ruff/compile/import e Alembic check; frontend com 37 testes unitários e build TypeScript/Vite. Zero falhas/skips.
+- **Database safety**: somente PostgreSQL efêmero `expense-flow-phase1-test` na porta 55433 foi usado. O banco local com dados reais na porta 55432 e o Compose 8089 não foram alterados. Backup informado: `backups/before-gestao-experiencia-v2-20260912-144607.dump`.
+- **Next step**: executar T8 — persistir e ler snapshots de parcelas — depois T9–T13 em ordem.
+- **Blockers**: nenhum.
+- **Uncommitted files**: apenas mudanças preexistentes do usuário fora desta feature.
+- **Branch**: `codex/gestao-experiencia-v2`.
