@@ -1,10 +1,10 @@
 from datetime import date
 from fastapi import APIRouter, Request
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from sqlalchemy import delete as sql_delete, select
 from app.api.auth import DB, FamilyID
 from app.api.common import get_row, member, operation, reopen_month
-from app.api.commitments import ShareInput, details, ensure_cycle
+from app.api.commitments import PurchaseInput, ShareInput, details, ensure_cycle, preview_purchase
 from app.db.models import (
     Commitment,
     Installment,
@@ -12,11 +12,13 @@ from app.db.models import (
     Advance,
     AdvanceItem,
     Card,
+    Cycle,
     Audit,
     now,
 )
 from app.db.unit_of_work import check_version
 from app.domain.cycles import month_start, add_months
+from app.domain.money import MAX_CENTS
 from app.domain.responsibility import allocate_aggregate_split, responsibility_preview_hash
 from app.errors import AppError
 
@@ -55,6 +57,20 @@ class ResponsibilityApply(BaseModel):
     def valid(self):
         ResponsibilityChange(version=self.source_version, shares=self.shares)
         return self
+
+
+class FullEditInput(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+    version: int = Field(ge=1)
+    description: str = Field(min_length=1, max_length=200)
+    category: str | None = Field(default=None, max_length=100)
+    buyer_id: str
+    card_id: str | None = None
+    purchased_at: date
+    total_cents: int = Field(gt=0, le=MAX_CENTS)
+    count: int = Field(ge=1, le=120)
+    first_month: date
+    shares: list[ShareInput] = Field(min_length=1, max_length=20)
 
 
 def responsibility_preview_data(db, family, id, body):
@@ -240,6 +256,139 @@ def transfer_responsibility(
         return details(db, commitment)
 
     return operation(db, family, request, body.model_dump(), action)
+
+
+def edit_preview_data(db, family, id, body):
+    commitment = get_row(db, Commitment, id)
+    if commitment.version != body.version:
+        raise AppError("version_conflict", "Registro alterado. Recarregue.")
+    current = details(db, commitment)
+    parts = current["installments"]
+    template_shares = [
+        {"user_id": share["user_id"], "weight": share["weight"]}
+        for share in current["shares"]
+    ]
+    requested_shares = [share.model_dump() for share in body.shares]
+    recalculation_values = {
+        "buyer_id": (commitment.buyer_id, body.buyer_id),
+        "card_id": (commitment.card_id, body.card_id),
+        "purchased_at": (commitment.purchased_at, body.purchased_at),
+        "total_cents": (commitment.total_cents, body.total_cents),
+        "count": (commitment.original_count, body.count),
+        "first_month": (date.fromisoformat(parts[0]["month"]), month_start(body.first_month)),
+        "shares": (template_shares, requested_shares),
+    }
+    changed_recalculation = [
+        field for field, (before, after) in recalculation_values.items() if before != after
+    ]
+    has_payments = any(part["paid_at"] for part in parts)
+    if has_payments and changed_recalculation:
+        raise AppError(
+            "paid_fields_locked",
+            "Há pagamentos. Altere somente descrição e categoria ou reabra-os.",
+            fields=changed_recalculation,
+        )
+    if has_payments:
+        schedule = parts
+    else:
+        purchase = PurchaseInput(**body.model_dump(exclude={"version"}))
+        schedule = preview_purchase(db, family, purchase)["installments"]
+    before_commitment = {
+        "description": commitment.description,
+        "category": commitment.category,
+        "buyer_id": commitment.buyer_id,
+        "card_id": commitment.card_id,
+        "purchased_at": commitment.purchased_at.isoformat(),
+        "total_cents": commitment.total_cents,
+        "count": commitment.original_count,
+        "first_month": parts[0]["month"],
+        "shares": template_shares,
+    }
+    after_commitment = {
+        "description": body.description,
+        "category": body.category,
+        "buyer_id": body.buyer_id,
+        "card_id": body.card_id,
+        "purchased_at": body.purchased_at.isoformat(),
+        "total_cents": body.total_cents,
+        "count": body.count,
+        "first_month": month_start(body.first_month).isoformat(),
+        "shares": requested_shares,
+    }
+    target_months = {date.fromisoformat(part["month"]) for part in schedule}
+    current_cycle_ids = {part["cycle_id"] for part in parts if part["cycle_id"]}
+    cycle_filters = []
+    if current_cycle_ids:
+        cycle_filters.append(Cycle.id.in_(current_cycle_ids))
+    if body.card_id:
+        cycle_filters.append(Cycle.card_id == body.card_id)
+    cycles = []
+    if cycle_filters:
+        from sqlalchemy import or_
+
+        rows = db.scalars(select(Cycle).where(or_(*cycle_filters)).order_by(Cycle.month)).all()
+        cycles = [
+            {
+                "id": cycle.id,
+                "month": cycle.month.isoformat(),
+                "confirmed": cycle.confirmed,
+                "paid_at": cycle.paid_at.isoformat() if cycle.paid_at else None,
+            }
+            for cycle in rows
+            if cycle.id in current_cycle_ids
+            or (cycle.card_id == body.card_id and cycle.month in target_months)
+        ]
+    plans = db.scalars(
+        select(Advance)
+        .where(Advance.commitment_id == id, Advance.state == "planned")
+        .order_by(Advance.created_at)
+    ).all()
+    planned_advances = []
+    part_order = {part["id"]: index for index, part in enumerate(parts)}
+    for plan in plans:
+        ids = db.scalars(
+            select(AdvanceItem.installment_id).where(AdvanceItem.advance_id == plan.id)
+        ).all()
+        planned_advances.append(
+            {
+                "id": plan.id,
+                "state": plan.state,
+                "amount_cents": plan.amount_cents,
+                "installment_ids": sorted(ids, key=part_order.get),
+            }
+        )
+    read_set = {
+        "source_version": commitment.version,
+        "has_payments": has_payments,
+        "before": {"commitment": before_commitment, "installments": parts},
+        "after": {"commitment": after_commitment, "installments": schedule},
+        "affected_cycles": cycles,
+        "planned_advances": planned_advances,
+    }
+    return {
+        **read_set,
+        "allowed_fields": (
+            ["description", "category"]
+            if has_payments
+            else [
+                "description",
+                "category",
+                "buyer_id",
+                "card_id",
+                "purchased_at",
+                "total_cents",
+                "count",
+                "first_month",
+                "shares",
+            ]
+        ),
+        "preview_hash": responsibility_preview_hash(read_set),
+    }
+
+
+@router.post("/{id}/edit-preview")
+def edit_preview(id: str, body: FullEditInput, db: DB, family: FamilyID):
+    return edit_preview_data(db, family, id, body)
 
 
 def editable(db, id):

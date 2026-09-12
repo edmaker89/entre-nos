@@ -12,8 +12,9 @@ from app.db.models import (
     InstallmentResponsibilityShare,
     Share,
 )
-from app.domain.cycles import first_cycle, cycle_for_month, add_months, month_start
-from app.domain.money import installments, MAX_CENTS, allocate
+from app.domain.cycles import first_cycle, cycle_for_month, month_start
+from app.domain.commitments import build_commitment_schedule
+from app.domain.money import MAX_CENTS, allocate
 from app.errors import AppError
 
 router = APIRouter(prefix="/api/v1/commitments", tags=["commitments"])
@@ -82,19 +83,21 @@ def preview_purchase(db, family, body):
     else:
         first = {"needs_review": False}
         start = month_start(body.first_month or body.purchased_at)
-    parts = []
-    for i, amount in enumerate(installments(body.total_cents, body.count)):
-        month = add_months(start, i)
-        due = cycle_for_month(month, card.closing_day, card.due_day)["due_date"] if card else month
-        parts.append(
-            {
-                "number": i + 1,
-                "amount_cents": amount,
-                "month": month.isoformat(),
-                "due_date": due.isoformat(),
-                "needs_review": first["needs_review"],
-            }
+    parts = [
+        {
+            **part,
+            "month": part["month"].isoformat(),
+            "due_date": part["due_date"].isoformat(),
+        }
+        for part in build_commitment_schedule(
+            total_cents=body.total_cents,
+            count=body.count,
+            first_month=start,
+            closing_day=card.closing_day if card else None,
+            due_day=card.due_day if card else None,
+            needs_review=first["needs_review"],
         )
+    ]
     return {"installments": parts, "shares": [s.model_dump() for s in body.shares]}
 
 
