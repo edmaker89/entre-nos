@@ -8,7 +8,7 @@ from app.api.recurrences import materialize
 from app.db.models import (
     Commitment,
     Installment,
-    Share,
+    InstallmentResponsibilityShare,
     Occurrence,
     Recurrence,
     Advance,
@@ -46,9 +46,16 @@ def month_data(db, family, month, person=None):
             .where(Membership.family_id == family)
         ).all()
     )
-    shares = {}
-    for s in db.scalars(select(Share).order_by(Share.position)):
-        shares.setdefault(s.commitment_id, []).append({"user_id": s.user_id, "weight": s.weight})
+    installment_shares = {}
+    for snapshot in db.scalars(
+        select(InstallmentResponsibilityShare).order_by(
+            InstallmentResponsibilityShare.installment_id,
+            InstallmentResponsibilityShare.position,
+        )
+    ):
+        installment_shares.setdefault(snapshot.installment_id, []).append(
+            {"user_id": snapshot.user_id, "weight": snapshot.weight}
+        )
     advances = {
         i.installment_id: (a.id, a.state)
         for i, a in db.execute(
@@ -88,7 +95,7 @@ def month_data(db, family, month, person=None):
                 "needs_review": p.needs_review,
                 "advance_id": advance[0] if advance else None,
                 "advance_state": advance[1] if advance else None,
-                "shares": shares.get(c.id, []),
+                "shares": installment_shares.get(p.id, []),
             }
         )
     for o, r in db.execute(

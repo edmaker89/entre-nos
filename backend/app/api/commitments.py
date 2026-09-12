@@ -4,9 +4,16 @@ from pydantic import BaseModel, Field, ConfigDict, model_validator
 from sqlalchemy import select
 from app.api.auth import DB, FamilyID
 from app.api.common import get_row, serialize, member, operation, reopen_month
-from app.db.models import Card, Cycle, Commitment, Installment, Share
+from app.db.models import (
+    Card,
+    Cycle,
+    Commitment,
+    Installment,
+    InstallmentResponsibilityShare,
+    Share,
+)
 from app.domain.cycles import first_cycle, cycle_for_month, add_months, month_start
-from app.domain.money import installments, MAX_CENTS
+from app.domain.money import installments, MAX_CENTS, allocate
 from app.errors import AppError
 
 router = APIRouter(prefix="/api/v1/commitments", tags=["commitments"])
@@ -100,10 +107,29 @@ def details(db, commitment):
     shares = db.scalars(
         select(Share).where(Share.commitment_id == commitment.id).order_by(Share.position)
     ).all()
+    snapshots = {}
+    for snapshot in db.scalars(
+        select(InstallmentResponsibilityShare)
+        .join(Installment, Installment.id == InstallmentResponsibilityShare.installment_id)
+        .where(Installment.commitment_id == commitment.id)
+        .order_by(
+            InstallmentResponsibilityShare.installment_id,
+            InstallmentResponsibilityShare.position,
+        )
+    ):
+        snapshots.setdefault(snapshot.installment_id, []).append(
+            {
+                "user_id": snapshot.user_id,
+                "weight": snapshot.weight,
+                "position": snapshot.position,
+            }
+        )
     pending = [p for p in parts if p.paid_at is None]
     return {
         **serialize(commitment),
-        "installments": [serialize(p) for p in parts],
+        "installments": [
+            {**serialize(p), "shares": snapshots.get(p.id, [])} for p in parts
+        ],
         "shares": [serialize(s) for s in shares],
         "pending_count": len(pending),
         "last_open_number": max((p.number for p in pending), default=None),
@@ -136,6 +162,7 @@ def persist_purchase(db, family, body, preview, *, imported=False, numbers=None,
             )
         )
     card = get_row(db, Card, body.card_id) if body.card_id else None
+    saved_parts = []
     for i, part in enumerate(preview["installments"]):
         month = date.fromisoformat(part["month"])
         cycle = ensure_cycle(db, family, card, month) if card else None
@@ -144,8 +171,7 @@ def persist_purchase(db, family, body, preview, *, imported=False, numbers=None,
             cycle.version += 1
         amount = part["amount_cents"]
         due = cycle.due_date if cycle else date.fromisoformat(part["due_date"])
-        db.add(
-            Installment(
+        installment = Installment(
                 family_id=family,
                 commitment_id=c.id,
                 number=numbers[i] if numbers else i + 1,
@@ -160,8 +186,26 @@ def persist_purchase(db, family, body, preview, *, imported=False, numbers=None,
                 needs_review=part["needs_review"],
                 manually_assigned=body.first_month is not None,
             )
-        )
+        db.add(installment)
+        saved_parts.append(installment)
         reopen_month(db, family, month)
+    db.flush()
+    for installment in saved_parts:
+        weights = allocate(installment.amount_cents, [share.weight for share in body.shares])
+        for position, (share, weight) in enumerate(
+            zip(body.shares, weights, strict=True)
+        ):
+            if not weight:
+                continue
+            db.add(
+                InstallmentResponsibilityShare(
+                    family_id=family,
+                    installment_id=installment.id,
+                    user_id=share.user_id,
+                    weight=weight,
+                    position=position,
+                )
+            )
     db.flush()
     return details(db, c)
 
