@@ -11,9 +11,11 @@ import {today,api,createOperation} from './api/client'
 import {Overview} from './pages/Overview'
 import {Login} from './pages/Login'
 import {AppShell} from './layout/AppShell'
+import {InviteLanding} from './pages/InviteLanding'
 import type {Auth} from './layout/types'
 export type {Person,Auth} from './layout/types'
 export function App(){
+ if(window.location.pathname==='/invite')return <InviteLanding/>
  const [selectedMonth,setSelectedMonth]=useState('default')
  const [detail,setDetail]=useState<string|null>(null)
  const [adding,setAdding]=useState(false),[revision,setRevision]=useState(0)

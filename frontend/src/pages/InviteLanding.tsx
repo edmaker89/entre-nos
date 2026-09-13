@@ -1,0 +1,14 @@
+import {useEffect,useState} from 'react'
+import {Layers} from 'lucide-react'
+import {api} from '../api/client'
+
+type InviteInfo={status:'valid',family_name:string,expires_at:string}
+export function InviteLanding({onComplete}:{onComplete?:()=>void}={}){
+ const [token]=useState(()=>{const value=new URLSearchParams(window.location.search).get('token')??'';window.history.replaceState({},'',window.location.pathname);return value})
+ const [info,setInfo]=useState<InviteInfo|null>(null),[mode,setMode]=useState<'login'|'register'>('login'),[error,setError]=useState(''),[busy,setBusy]=useState(false)
+ const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[name,setName]=useState('')
+ useEffect(()=>{if(!token){setError('Link de convite incompleto. Peça um novo convite ao proprietário da família.');return}api<InviteInfo>('/auth/invites/inspect',{method:'POST',body:JSON.stringify({token})}).then(setInfo).catch(error=>setError(error.message))},[token])
+ const complete=()=>{if(onComplete)onComplete();else window.location.assign('/')}
+ const submit=async()=>{setBusy(true);setError('');try{if(mode==='login'){await api('/auth/login',{method:'POST',body:JSON.stringify({email,password})});await api('/auth/invites/accept',{method:'POST',body:JSON.stringify({token})})}else await api('/auth/invites/register',{method:'POST',body:JSON.stringify({token,name,email,password})});complete()}catch(error){setError(error instanceof Error?error.message:'Não foi possível aceitar o convite.')}finally{setBusy(false)}}
+ return <main className="invite-layout"><section className="invite-card"><div className="brand"><Layers/><span>entre nós<span className="brand-dot">.</span></span></div><span className="eyebrow">CONVITE DE FAMÍLIA</span><h1>Você foi convidado</h1>{info&&<><p>Entre ou crie sua conta para participar de:</p><h2>{info.family_name}</h2><div className="invite-tabs"><button className={mode==='login'?'selected':''} onClick={()=>setMode('login')}>Já tenho conta</button><button className={mode==='register'?'selected':''} onClick={()=>setMode('register')}>Criar conta</button></div><form onSubmit={event=>{event.preventDefault();void submit()}}>{mode==='register'&&<label>Nome<input value={name} maxLength={100} onChange={event=>setName(event.target.value)} required/></label>}<label>Email<input type="email" value={email} onChange={event=>setEmail(event.target.value)} required/></label><label>Senha<input type="password" value={password} minLength={mode==='register'?15:1} maxLength={200} onChange={event=>setPassword(event.target.value)} required/></label><button className="primary" disabled={busy}>{busy?'Aguarde…':mode==='login'?'Entrar e aceitar convite':'Criar conta e entrar'}</button></form></>}{!info&&!error&&<p>Verificando convite…</p>}{error&&<div className="error" role="alert">{error}</div>}</section></main>
+}

@@ -1,5 +1,6 @@
 let csrf:string|undefined
 const pendingOperations=new Map<string,string>()
+const publicMutations=new Set(['/auth/login','/auth/invites/inspect','/auth/invites/register'])
 type ApiErrorDetails={code?:string;fields?:string[];difference_cents?:number;operation_id?:string}
 export class ApiError extends Error {
  constructor(message:string,public status:number,details:ApiErrorDetails={}){
@@ -14,7 +15,7 @@ export class ApiError extends Error {
 }
 export async function api<T=any>(path:string, options:RequestInit={}):Promise<T>{
  const method=options.method??'GET'
- if(method!=='GET'&&!csrf&&path!=='/auth/login'){
+ if(method!=='GET'&&!csrf&&!publicMutations.has(path)){
   csrf=(await api<{csrf_token:string}>('/auth/csrf')).csrf_token
  }
  let response:Response
