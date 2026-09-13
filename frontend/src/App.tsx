@@ -12,10 +12,14 @@ import {Overview} from './pages/Overview'
 import {Login} from './pages/Login'
 import {AppShell} from './layout/AppShell'
 import {InviteLanding} from './pages/InviteLanding'
+import {ForgotPassword} from './pages/ForgotPassword'
+import {ResetPassword} from './pages/ResetPassword'
 import type {Auth} from './layout/types'
 export type {Person,Auth} from './layout/types'
 export function App(){
  if(window.location.pathname==='/invite')return <InviteLanding/>
+ if(window.location.pathname==='/forgot-password')return <ForgotPassword/>
+ if(window.location.pathname==='/reset-password')return <ResetPassword/>
  const [selectedMonth,setSelectedMonth]=useState('default')
  const [detail,setDetail]=useState<string|null>(null)
  const [adding,setAdding]=useState(false),[revision,setRevision]=useState(0)

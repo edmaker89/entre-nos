@@ -1,6 +1,6 @@
 let csrf:string|undefined
 const pendingOperations=new Map<string,string>()
-const publicMutations=new Set(['/auth/login','/auth/invites/inspect','/auth/invites/register'])
+const publicMutations=new Set(['/auth/login','/auth/invites/inspect','/auth/invites/register','/auth/password-reset/request','/auth/password-reset/validate','/auth/password-reset/complete'])
 type ApiErrorDetails={code?:string;fields?:string[];difference_cents?:number;operation_id?:string}
 export class ApiError extends Error {
  constructor(message:string,public status:number,details:ApiErrorDetails={}){
