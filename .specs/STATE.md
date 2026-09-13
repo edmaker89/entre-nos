@@ -54,7 +54,7 @@
 
 - **Feature**: gestao-e-experiencia-v2 — `.specs/features/gestao-e-experiencia-v2/`
 - **Phase / Task**: Fases 1–4 concluídas; próxima tarefa T27 da Fase 5.
-- **Completed**: T1–T26 em commits atômicos. A Fase 4 entregou gestão familiar owner/member, nome/código, convites hash-only de uso único, adesão/cadastro por convite, perfil próprio e compartilhamento Web Share/WhatsApp/cópia nos commits `de91404`, `f4f7fd8`, `4755380`, `27ef237`, `349aab8`, `dcec908` e `777c09b`.
+- **Completed**: T1–T26 em commits atômicos. A Fase 4 entregou gestão familiar owner/member, nome/código, convites hash-only de uso único, adesão/cadastro por convite, perfil próprio e compartilhamento Web Share/WhatsApp/cópia nos commits `de91404`, `f4f7fd8`, `4755380`, `27ef237`, `349aab8`, `dcec908` e `777c09b`; `9f3d865` garante owner em novas famílias provisionadas.
 - **Verification**: gate transversal passou com 204/204 testes backend, Ruff/compile/import, Alembic check, 109/109 testes frontend, build TypeScript/Vite e 31/31 E2E; zero falhas/skips. Concorrência real de convite confirmou exatamente um consumo.
 - **Database safety**: somente PostgreSQL efêmero `expense-flow-phase4-db` na porta 65433 foi usado e removido ao final. O banco local com dados reais na porta 55432, o volume `expense-flow-dev-data` e o Compose 8089 não foram alterados. Backup validado permanece em `backups/before-gestao-experiencia-v2-20260912-144607.dump`.
 - **Next step**: executar T27–T29 da Fase 5 — recuperação de senha por email e token de 15 minutos.

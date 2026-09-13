@@ -385,7 +385,7 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T20: Criar leitura familiar e autorização owner/member
 
-**Status:** ✅ Concluída — `de91404`
+**Status:** ✅ Concluída — `de91404` + correção de provisionamento `9f3d865`
 
 **What:** Implementar `require_owner` e GET familiar com papéis, integrantes, código e convites sem segredo.  
 **Where:** `backend/app/api/family.py`, `permissions.py`, `main.py`, testes  
