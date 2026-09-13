@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     email_timeout_seconds: float = 5.0
     public_app_url: str = "http://localhost:5173"
     family_invite_ttl_seconds: int = 7 * 86400
+    auth_rate_limit_secret: str = "local-development-rate-limit-secret"
 
 
 settings = Settings()

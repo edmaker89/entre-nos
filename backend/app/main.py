@@ -11,6 +11,7 @@ from app.api.commitments import router as commitments_router
 from app.api.cards import router as cards_router
 from app.api.family import router as family_router
 from app.api.family_invites import router as family_invites_router
+from app.api.invite_auth import router as invite_auth_router
 from app.errors import AppError
 from app.api.auth import router as auth_router
 import logging
@@ -78,6 +79,7 @@ async def private_responses(request: Request, call_next):
 app.include_router(auth_router)
 app.include_router(family_router)
 app.include_router(family_invites_router)
+app.include_router(invite_auth_router)
 
 app.include_router(cards_router)
 

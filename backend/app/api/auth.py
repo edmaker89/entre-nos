@@ -40,6 +40,23 @@ class Login(BaseModel):
     password: str = Field(min_length=1, max_length=200)
 
 
+def issue_session(db: Session, response: Response, user: User):
+    token = secrets.token_urlsafe(32)
+    csrf = digest(token + ":csrf")
+    db.add(LoginSession(user_id=user.id, token_hash=digest(token), csrf_hash=digest(csrf)))
+    response.set_cookie(
+        "expense_session",
+        token,
+        httponly=True,
+        secure=settings.secure_cookies,
+        samesite="lax",
+        max_age=settings.session_absolute_seconds,
+        path="/",
+    )
+    response.headers["Cache-Control"] = "no-store"
+    return csrf
+
+
 def current_user(request: Request, db: DB):
     token = request.cookies.get("expense_session", "")
     session = db.scalar(select(LoginSession).where(LoginSession.token_hash == digest(token)))
@@ -106,19 +123,7 @@ def login(body: Login, request: Request, response: Response):
             valid = False
         if not valid or not user or not user.active:
             raise AppError("invalid_login", "Email ou senha incorretos.", 401)
-        token = secrets.token_urlsafe(32)
-        csrf = digest(token + ":csrf")
-        s.add(LoginSession(user_id=user.id, token_hash=digest(token), csrf_hash=digest(csrf)))
-        response.set_cookie(
-            "expense_session",
-            token,
-            httponly=True,
-            secure=settings.secure_cookies,
-            samesite="lax",
-            max_age=settings.session_absolute_seconds,
-            path="/",
-        )
-        response.headers["Cache-Control"] = "no-store"
+        csrf = issue_session(s, response, user)
         return {"user": {"id": user.id, "name": user.name}, "csrf_token": csrf}
 
 
