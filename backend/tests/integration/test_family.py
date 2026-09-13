@@ -5,9 +5,10 @@ from uuid import uuid4
 
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from app.api.auth import passwords
-from app.db.models import Family, FamilyInvite, Membership, User, now
+from app.db.models import Audit, Family, FamilyInvite, Membership, User, now
 from app.db.unit_of_work import engine, transaction
 from app.main import app
 
@@ -153,3 +154,118 @@ def test_family_read_does_not_expose_user_email_or_password_hash():
     assert owner["email"] not in repr(payload)
     assert owner["password_hash"] not in repr(payload)
     assert all(set(member) == {"id", "name", "role"} for member in payload["members"])
+
+
+def test_owner_renames_family_with_version_idempotency_and_audit():
+    family_id, _, owner, _ = _account()
+    headers = {"Idempotency-Key": str(uuid4())}
+    with _client(owner) as client:
+        first = client.patch(
+            "/api/v1/family", json={"name": "Casa Silva", "version": 1}, headers=headers
+        )
+        replay = client.patch(
+            "/api/v1/family", json={"name": "Casa Silva", "version": 1}, headers=headers
+        )
+    assert first.status_code == 200
+    assert first.json() == {"id": family_id, "name": "Casa Silva", "version": 2}
+    assert replay.json() == first.json()
+    with Session(engine) as db:
+        audit = db.scalar(
+            select(Audit).where(Audit.family_id == family_id, Audit.operation == "family.rename")
+        )
+        assert audit.actor_id == owner["id"]
+        assert audit.details == {"fields": ["name"]}
+
+
+def test_family_name_must_have_between_one_and_one_hundred_characters():
+    _, _, owner, _ = _account()
+    with _client(owner) as client:
+        blank = client.patch(
+            "/api/v1/family",
+            json={"name": "   ", "version": 1},
+            headers={"Idempotency-Key": str(uuid4())},
+        )
+        long = client.patch(
+            "/api/v1/family",
+            json={"name": "x" * 101, "version": 1},
+            headers={"Idempotency-Key": str(uuid4())},
+        )
+    assert blank.status_code == 422
+    assert long.status_code == 422
+
+
+def test_member_cannot_rename_family():
+    _, _, _, member = _account()
+    with _client(member) as client:
+        response = client.patch(
+            "/api/v1/family",
+            json={"name": "Não pode", "version": 1},
+            headers={"Idempotency-Key": str(uuid4())},
+        )
+    assert response.status_code == 403
+    assert response.json()["code"] == "owner_required"
+
+
+def test_family_rename_rejects_stale_version_without_change():
+    family_id, _, owner, _ = _account()
+    with _client(owner) as client:
+        response = client.patch(
+            "/api/v1/family",
+            json={"name": "Não aplicar", "version": 9},
+            headers={"Idempotency-Key": str(uuid4())},
+        )
+    assert response.status_code == 409
+    assert response.json()["code"] == "version_conflict"
+    with Session(engine) as db:
+        assert db.get(Family, family_id).name == "Família Teste"
+
+
+def test_owner_rotates_family_code_and_records_audit():
+    family_id, old_code, owner, _ = _account()
+    with _client(owner) as client:
+        response = client.post(
+            "/api/v1/family/code/rotate",
+            json={"version": 1},
+            headers={"Idempotency-Key": str(uuid4())},
+        )
+    assert response.status_code == 200
+    assert response.json()["code"] != old_code
+    assert len(response.json()["code"]) == 10
+    assert response.json()["version"] == 2
+    with Session(engine) as db:
+        audit = db.scalar(
+            select(Audit).where(
+                Audit.family_id == family_id, Audit.operation == "family.code.rotate"
+            )
+        )
+        assert audit.details == {"fields": ["code"]}
+
+
+def test_code_rotation_retries_a_collision(monkeypatch):
+    _, _, owner, _ = _account()
+    _, existing_code, _, _ = _account()
+    candidates = iter([existing_code, "ZXCVBNM234"])
+    monkeypatch.setattr("app.api.family.family_code", lambda: next(candidates))
+    with _client(owner) as client:
+        response = client.post(
+            "/api/v1/family/code/rotate",
+            json={"version": 1},
+            headers={"Idempotency-Key": str(uuid4())},
+        )
+    assert response.status_code == 200
+    assert response.json()["code"] == "ZXCVBNM234"
+
+
+def test_member_cannot_rotate_code_and_owner_cannot_remove_self():
+    _, _, owner, member = _account()
+    with _client(member) as client:
+        denied = client.post(
+            "/api/v1/family/code/rotate",
+            json={"version": 1},
+            headers={"Idempotency-Key": str(uuid4())},
+        )
+    with _client(owner) as client:
+        absent = client.delete(f"/api/v1/family/members/{owner['id']}")
+    assert denied.status_code == 403
+    assert denied.json()["code"] == "owner_required"
+    assert absent.status_code == 404

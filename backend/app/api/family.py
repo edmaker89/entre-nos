@@ -1,12 +1,33 @@
 from sqlalchemy import select
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
+from pydantic import BaseModel, Field, field_validator
 
 from app.api.auth import CurrentUser, DB, FamilyID
+from app.api.common import operation
 from app.api.permissions import require_owner
-from app.db.models import Family, FamilyInvite, Membership, User, now
+from app.db.models import Audit, Family, FamilyInvite, Membership, User, family_code, now
+from app.db.unit_of_work import check_version
+from app.errors import AppError
 
 
 router = APIRouter(prefix="/api/v1/family", tags=["family"])
+
+
+class FamilyNameUpdate(BaseModel):
+    name: str = Field(min_length=1, max_length=100)
+    version: int = Field(ge=1)
+
+    @field_validator("name")
+    @classmethod
+    def meaningful_name(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("Informe o nome da família.")
+        return value
+
+
+class VersionInput(BaseModel):
+    version: int = Field(ge=1)
 
 
 @router.get("")
@@ -55,6 +76,74 @@ def get_family(db: DB, family_id: FamilyID, user: CurrentUser):
             "manage_invites": is_owner,
         },
     }
+
+
+@router.patch("")
+def rename_family(
+    body: FamilyNameUpdate,
+    request: Request,
+    db: DB,
+    family_id: FamilyID,
+    user: CurrentUser,
+):
+    require_owner(db, family_id, user.id)
+
+    def apply():
+        family = db.get(Family, family_id)
+        check_version(family, body.version)
+        family.name = body.name
+        db.add(
+            Audit(
+                family_id=family_id,
+                actor_id=user.id,
+                operation="family.rename",
+                entity_id=family_id,
+                details={"fields": ["name"]},
+            )
+        )
+        return {"id": family.id, "name": family.name, "version": family.version}
+
+    return operation(db, family_id, request, body.model_dump(), apply)
+
+
+@router.post("/code/rotate")
+def rotate_family_code(
+    body: VersionInput,
+    request: Request,
+    db: DB,
+    family_id: FamilyID,
+    user: CurrentUser,
+):
+    require_owner(db, family_id, user.id)
+
+    def apply():
+        family = db.get(Family, family_id)
+        check_version(family, body.version)
+        replacement = None
+        for _ in range(10):
+            candidate = family_code()
+            if db.scalar(select(Family.id).where(Family.code == candidate)) is None:
+                replacement = candidate
+                break
+        if replacement is None:
+            raise AppError(
+                "family_code_unavailable",
+                "Não foi possível gerar um novo código. Tente novamente.",
+                503,
+            )
+        family.code = replacement
+        db.add(
+            Audit(
+                family_id=family_id,
+                actor_id=user.id,
+                operation="family.code.rotate",
+                entity_id=family_id,
+                details={"fields": ["code"]},
+            )
+        )
+        return {"id": family.id, "code": family.code, "version": family.version}
+
+    return operation(db, family_id, request, body.model_dump(), apply)
 
 
 __all__ = ["router", "require_owner"]
