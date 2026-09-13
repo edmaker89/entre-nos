@@ -149,7 +149,7 @@ def test_revoked_invite_is_not_listed_and_revoke_rejects_stale_version():
         listed = client.get("/api/v1/family").json()["invites"]
     assert first.status_code == 200
     assert stale.status_code == 409
-    assert stale.json()["code"] in {"version_conflict", "invite_unavailable"}
+    assert stale.json()["code"] == "version_conflict"
     assert invite["id"] not in [item["id"] for item in listed]
 
 
