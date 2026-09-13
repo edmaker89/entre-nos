@@ -23,3 +23,14 @@ def resolve_family(request: Request, db: Session, user: User) -> str:
     family_context(db, resolved, lock=request.method not in ("GET", "HEAD", "OPTIONS"))
     request.state.family_id = resolved
     return resolved
+
+
+def require_owner(db: Session, family_id: str, user_id: str) -> Membership:
+    membership = db.get(Membership, (family_id, user_id))
+    if membership is None or membership.role != "owner":
+        raise AppError(
+            "owner_required",
+            "Somente o proprietário da família pode realizar esta ação.",
+            403,
+        )
+    return membership
