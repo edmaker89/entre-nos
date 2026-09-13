@@ -53,11 +53,11 @@
 ## Handoff
 
 - **Feature**: gestao-e-experiencia-v2 — `.specs/features/gestao-e-experiencia-v2/`
-- **Phase / Task**: Fase 1 concluída; próxima tarefa T8 da Fase 2.
-- **Completed**: T1–T7 em commits atômicos; correção adicional de privilégios runtime em `81b659f`. Esquema/backfill, distribuição exata, autenticação pré-família, senha/rate limit, Resend, erros React e primitive de modal entregues.
-- **Verification**: Full Backend final com 137 testes, Ruff/compile/import e Alembic check; frontend com 37 testes unitários e build TypeScript/Vite. Zero falhas/skips.
-- **Database safety**: somente PostgreSQL efêmero `expense-flow-phase1-test` na porta 55433 foi usado. O banco local com dados reais na porta 55432 e o Compose 8089 não foram alterados. Backup informado: `backups/before-gestao-experiencia-v2-20260912-144607.dump`.
-- **Next step**: executar T8 — persistir e ler snapshots de parcelas — depois T9–T13 em ordem.
+- **Phase / Task**: Fases 1–2 concluídas; próxima tarefa T14 da Fase 3.
+- **Completed**: T1–T13 em commits atômicos. A Fase 2 entregou snapshots de parcelas/ocorrências, prévia e aplicação transacional de transferência, cronograma reutilizável e edição completa segura nos commits `6ffc008`, `d219837`, `23c957c`, `46a1587`, `67afc8e` e `90df1d5`.
+- **Verification**: gate transversal Full Backend com 161 testes, Ruff/compile/import e Alembic check; zero falhas/skips. Gate frontend da Fase 1 permanece com 37 testes unitários e build TypeScript/Vite.
+- **Database safety**: somente PostgreSQL efêmero `expense-flow-phase2-test` na porta 55433 foi usado. O banco local com dados reais na porta 55432 e o Compose 8089 não foram alterados. Backup validado: `backups/before-gestao-experiencia-v2-20260912-144607.dump`.
+- **Next step**: executar T14 — modal de transferência — e depois T15–T19 em ordem.
 - **Blockers**: nenhum.
 - **Uncommitted files**: apenas mudanças preexistentes do usuário fora desta feature.
 - **Branch**: `codex/gestao-experiencia-v2`.

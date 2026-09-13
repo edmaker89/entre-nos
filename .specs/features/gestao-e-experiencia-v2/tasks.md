@@ -7,7 +7,7 @@ Implementar estas tarefas com a skill `tlc-spec-driven`: ativá-la por nome e se
 Se a skill não puder ser ativada, interromper a execução e informar o usuário.
 
 **Design:** `.specs/features/gestao-e-experiencia-v2/design.md`  
-**Status:** In Progress — Fase 1 (T1–T7) concluída; próxima tarefa T8
+**Status:** In Progress — Fases 1–2 (T1–T13) concluídas; próxima tarefa T14
 **Total:** 36 tarefas em 6 fases
 
 ---
@@ -201,6 +201,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T8: Persistir e ler snapshots de parcelas
 
+**Status:** ✅ Concluída — `6ffc008`
+
 **What:** Criar snapshots ao cadastrar/importar/reconstruir parcelas e trocar detalhes/mês/previsão para a tabela por parcela.  
 **Where:** `backend/app/api/commitments.py`, `imports.py`, `months.py`, serviço de responsabilidade e testes  
 **Depends on:** T7  
@@ -213,6 +215,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 **Commit:** `feat(finance): snapshot installment responsibility`
 
 ### T9: Persistir e ler snapshots de ocorrências
+
+**Status:** ✅ Concluída — `d219837`
 
 **What:** Fotografar responsabilidade em `materialize()` e usar ocorrência, não JSON da regra, nas consultas mensais.  
 **Where:** `backend/app/api/recurrences.py`, `months.py`, serviço de responsabilidade e testes  
@@ -227,6 +231,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T10: Implementar prévia de transferência
 
+**Status:** ✅ Concluída — `23c957c`
+
 **What:** Criar comando/rota que calcula antes/depois para todas as parcelas abertas e lista meses e antecipações planejadas.  
 **Where:** `backend/app/domain/responsibility.py`, `backend/app/api/commitment_changes.py`, testes  
 **Depends on:** T9  
@@ -239,6 +245,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 **Commit:** `feat(commitments): preview open responsibility transfer`
 
 ### T11: Implementar transferência transacional
+
+**Status:** ✅ Concluída — `46a1587`
 
 **What:** Aplicar a prévia sob lock, substituir somente snapshots abertos, reabrir meses e auditar ator/campos.  
 **Where:** `backend/app/api/commitment_changes.py`, testes de integração/concorrência  
@@ -253,6 +261,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T12: Extrair serviço e prévia de edição completa
 
+**Status:** ✅ Concluída — `67afc8e`
+
 **What:** Extrair cálculo de cronograma e criar prévia com campos permitidos, antes/depois, ciclos e planos afetados.  
 **Where:** `backend/app/domain/commitments.py`, `backend/app/api/commitment_changes.py`, testes  
 **Depends on:** T11  
@@ -265,6 +275,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 **Commit:** `refactor(commitments): add reusable edit schedule preview`
 
 ### T13: Implementar edição completa transacional
+
+**Status:** ✅ Concluída — `90df1d5`
 
 **What:** Expandir PATCH para alterações permitidas, reconstrução atômica, cancelamento seguro de planos abertos e audit event.  
 **Where:** `backend/app/api/commitment_changes.py`, testes de integração  
