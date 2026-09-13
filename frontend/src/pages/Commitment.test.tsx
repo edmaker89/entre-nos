@@ -1,20 +1,32 @@
 import React from 'react'
-import {render,screen,waitFor,cleanup} from '@testing-library/react'
+import {render,screen,waitFor,cleanup,fireEvent} from '@testing-library/react'
 import {it,expect,vi,afterEach} from 'vitest'
 import {Commitment} from './Commitment'
-vi.mock('../api/client',async()=>({...await vi.importActual('../api/client'),api:vi.fn()}))
-import {api} from '../api/client'
+vi.mock('../api/client',async()=>({...await vi.importActual('../api/client'),api:vi.fn(),createOperation:vi.fn()}))
+import {api,createOperation} from '../api/client'
 afterEach(()=>{cleanup();vi.clearAllMocks()})
+const members=[{id:'douglas',name:'Douglas'},{id:'vanessa',name:'Vanessa'}]
+const base={id:'car',version:2,description:'Carro',category:'Transporte',buyer_id:'douglas',card_id:null,purchased_at:'2026-09-01',total_cents:20000,shares:[{user_id:'douglas',weight:20000}],original_count:2,pending_count:2,last_open_number:2,installments:[{id:'i1',number:1,month:'2026-10-01',original_month:'2026-10-01',amount_cents:10000,paid_at:null},{id:'i2',number:2,month:'2026-11-01',original_month:'2026-11-01',amount_cents:10000,paid_at:null}],imported:false}
+const load=(detail:any=base,plans:any[]=[])=>vi.mocked(api).mockImplementation(async(path)=>path==='/advances'?plans:path==='/cards'?[]:detail)
 it('ADV-01 keeps original count separate from pending count',async()=>{
- vi.mocked(api).mockImplementation(async(path)=>path==='/advances'?[]:{description:'Carro',original_count:48,pending_count:35,last_open_number:44,installments:[],imported:true})
- render(<Commitment id="car" onClose={()=>{}} onChanged={()=>{}}/>)
+ load({description:'Carro',original_count:48,pending_count:35,last_open_number:44,installments:[],imported:true,shares:[],version:1,total_cents:0,buyer_id:'douglas',purchased_at:'2026-01-01'})
+ render(<Commitment id="car" members={members} onClose={()=>{}} onChanged={()=>{}}/>)
  await waitFor(()=>expect(screen.getByTestId('pending-count').textContent).toBe('35'))
  expect(screen.getByText('48 parcelas')).toBeTruthy()
  expect(screen.getByText('Última parcela em aberto: 44')).toBeTruthy()
 })
 it('ADV AC01 displays persisted original amount and discount in history',async()=>{
- vi.mocked(api).mockImplementation(async(path)=>path==='/advances'?[{id:'a',commitment_id:'car',month:'2026-10-01',state:'planned',amount_cents:108400,items:[{snapshot:{amount_cents:191900}}]}]:{description:'Carro',original_count:48,pending_count:35,last_open_number:44,installments:[]})
- render(<Commitment id="car" onClose={()=>{}} onChanged={()=>{}}/>)
+ load({...base,original_count:48,pending_count:35,last_open_number:44,installments:[]},[{id:'a',commitment_id:'car',month:'2026-10-01',state:'planned',amount_cents:108400,items:[{snapshot:{amount_cents:191900}}]}])
+ render(<Commitment id="car" members={members} onClose={()=>{}} onChanged={()=>{}}/>)
  await waitFor(()=>expect(screen.getByText(/Original:.*1.919,00.*Desconto:.*835,00/)).toBeTruthy())
  expect(screen.getByText(/1.084,00/)).toBeTruthy()
 })
+
+it('opens the complete edit and responsibility flows with product modals',async()=>{load();render(<Commitment id="car" members={members} onClose={()=>{}} onChanged={()=>{}}/>);fireEvent.click(await screen.findByRole('button',{name:'Editar lançamento'}));expect(screen.getByRole('dialog',{name:'Editar lançamento'})).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'Cancelar'}));fireEvent.click(screen.getByRole('button',{name:'Transferir responsabilidade'}));expect(screen.getByRole('dialog',{name:'Transferir responsabilidade'})).toBeTruthy()})
+it('previews and confirms a competence shift without native confirmation',async()=>{load();const apply=vi.fn().mockResolvedValue({});vi.mocked(createOperation).mockReturnValue(apply);vi.mocked(api).mockImplementation(async(path)=>path==='/advances'?[]:path==='/cards'?[]:path.includes('preview-shift')?{installments:[{month:'2026-12-01'}]}:base);render(<Commitment id="car" members={members} onClose={()=>{}} onChanged={()=>{}}/>);fireEvent.click(await screen.findByRole('button',{name:'Ajustar competência'}));fireEvent.change(screen.getByLabelText('Primeira competência'),{target:{value:'2026-12'}});fireEvent.click(screen.getByRole('button',{name:'Conferir competências'}));expect(await screen.findByText(/dezembro de 2026/)).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'Confirmar ajuste'}));await waitFor(()=>expect(apply).toHaveBeenCalled())})
+it('collects a payment date for a planned advance in a product modal',async()=>{load(base,[{id:'a',version:1,commitment_id:'car',month:'2026-10-01',state:'planned',amount_cents:9000,items:[{id:'x',installment_id:'i1',snapshot:{amount_cents:10000}}]}]);const apply=vi.fn().mockResolvedValue({});vi.mocked(createOperation).mockReturnValue(apply);render(<Commitment id="car" members={members} onClose={()=>{}} onChanged={()=>{}}/>);fireEvent.click(await screen.findByRole('button',{name:'Registrar pagamento'}));expect(screen.getByRole('dialog',{name:'Registrar pagamento'})).toBeTruthy();fireEvent.change(screen.getByLabelText('Data do pagamento'),{target:{value:'2026-09-15'}});fireEvent.click(screen.getByRole('button',{name:'Confirmar pagamento'}));await waitFor(()=>expect(createOperation).toHaveBeenCalledWith('/advances/a/pay','POST',{version:1,paid_at:'2026-09-15'}))})
+it('confirms cancelling an advance with explicit impact text',async()=>{load(base,[{id:'a',version:1,commitment_id:'car',month:'2026-10-01',state:'planned',amount_cents:9000,items:[{id:'x',installment_id:'i1',snapshot:{amount_cents:10000}}]}]);render(<Commitment id="car" members={members} onClose={()=>{}} onChanged={()=>{}}/>);fireEvent.click(await screen.findByRole('button',{name:'Cancelar antecipação'}));expect(screen.getByText(/parcelas voltarão ao cronograma normal/)).toBeTruthy()})
+it('confirms reopening a paid advance internally',async()=>{load({...base,installments:[{...base.installments[0],paid_at:'2026-09-12'},base.installments[1]]},[{id:'a',version:1,commitment_id:'car',month:'2026-10-01',state:'paid',amount_cents:9000,items:[{id:'x',installment_id:'i1',snapshot:{amount_cents:10000}}]}]);render(<Commitment id="car" members={members} onClose={()=>{}} onChanged={()=>{}}/>);fireEvent.click(await screen.findByRole('button',{name:'Reabrir antecipação'}));expect(screen.getByRole('dialog',{name:'Reabrir antecipação?'})).toBeTruthy()})
+it('requires an internal destructive confirmation before deleting',async()=>{load();const close=vi.fn();render(<Commitment id="car" members={members} onClose={close} onChanged={()=>{}}/>);fireEvent.click(await screen.findByRole('button',{name:'Excluir compromisso'}));expect(screen.getByText('Todas as parcelas e o histórico desse compromisso serão removidos.')).toBeTruthy();expect(close).not.toHaveBeenCalled()})
+it('keeps the action modal open and displays server errors',async()=>{vi.mocked(api).mockImplementation(async(path)=>path==='/advances'?[]:path==='/cards'?[]:path.includes('preview-shift')?Promise.reject(new Error('Falha ao ajustar')):base);render(<Commitment id="car" members={members} onClose={()=>{}} onChanged={()=>{}}/>);await screen.findByText('Carro');fireEvent.click(screen.getByRole('button',{name:'Ajustar competência'}));fireEvent.click(screen.getByRole('button',{name:'Conferir competências'}));expect((await screen.findByRole('alert')).textContent).toContain('Falha ao ajustar');expect(screen.getByRole('dialog',{name:'Ajustar competência'})).toBeTruthy()})
+it('opens actions without invoking native alert, prompt or confirm',async()=>{const prompt=vi.spyOn(window,'prompt'),confirm=vi.spyOn(window,'confirm'),alert=vi.spyOn(window,'alert');load();render(<Commitment id="car" members={members} onClose={()=>{}} onChanged={()=>{}}/>);fireEvent.click(await screen.findByRole('button',{name:'Ajustar competência'}));expect(prompt).not.toHaveBeenCalled();expect(confirm).not.toHaveBeenCalled();expect(alert).not.toHaveBeenCalled()})
