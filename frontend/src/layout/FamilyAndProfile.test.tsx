@@ -1,0 +1,35 @@
+import React from 'react'
+import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react'
+import {afterEach,describe,expect,it,vi} from 'vitest'
+import {Sidebar} from './Sidebar'
+import {Topbar} from './Topbar'
+import {Family} from '../pages/Family'
+import {ProfileModal} from '../components/ProfileModal'
+import {api,createOperation} from '../api/client'
+
+vi.mock('../api/client',async()=>({...await vi.importActual('../api/client'),api:vi.fn(),createOperation:vi.fn()}))
+
+const ownerAuth={user:{id:'douglas',name:'Douglas',email:'douglas@test.local',version:1},members:[{id:'douglas',name:'Douglas'},{id:'vanessa',name:'Vanessa'}],family_id:'family'}
+const familyPayload={family:{id:'family',name:'Família Silva',code:'ABC234XYZ5',version:1},members:[{id:'douglas',name:'Douglas',role:'owner'},{id:'vanessa',name:'Vanessa',role:'member'}],invites:[{id:'invite',created_at:'2026-09-13T10:00:00Z',expires_at:'2026-09-20T10:00:00Z',status:'pending'}],capabilities:{manage_family:true,manage_invites:true}}
+
+afterEach(()=>{cleanup();vi.clearAllMocks()})
+
+describe('FAMILY-01 and PROFILE-01 navigation',()=>{
+ it('makes the family pill an actionable navigation entry',()=>{const select=vi.fn();render(<Sidebar page="Resumo" onSelect={select}/>);fireEvent.click(screen.getByRole('button',{name:/Minha família/}));expect(select).toHaveBeenCalledWith('Família')})
+ it('keeps a Family destination available in mobile navigation',()=>{render(<Sidebar page="Resumo" onSelect={()=>{}}/>);expect(screen.getByRole('button',{name:'Família'}).className).toContain('mobile-family-link')})
+ it('makes name and avatar a single profile button while logout stays separate',()=>{const profile=vi.fn();render(<Topbar page="Resumo" auth={ownerAuth} onProfile={profile} onLogout={()=>{}}/>);fireEvent.click(screen.getByRole('button',{name:/Abrir perfil de Douglas/}));expect(profile).toHaveBeenCalledTimes(1);expect(screen.getByRole('button',{name:'Sair'})).toBeTruthy()})
+})
+
+describe('FAMILY-01 management page',()=>{
+ it('shows family identity, owner, members, roles and pending invites',async()=>{vi.mocked(api).mockResolvedValue(familyPayload);render(<Family/>);expect(await screen.findByText('Família Silva')).toBeTruthy();expect(screen.getByText('ABC234XYZ5')).toBeTruthy();expect(screen.getByText('Proprietário')).toBeTruthy();expect(screen.getByText('Vanessa')).toBeTruthy();expect(screen.getByText('Convites pendentes')).toBeTruthy()})
+ it('shows management actions only to the owner',async()=>{vi.mocked(api).mockResolvedValue(familyPayload);render(<Family/>);expect(await screen.findByRole('button',{name:'Renomear família'})).toBeTruthy();expect(screen.getByRole('button',{name:'Gerar convite'})).toBeTruthy();expect(screen.getByRole('button',{name:'Gerar novo código'})).toBeTruthy()})
+ it('explains owner-only actions to members without rendering controls',async()=>{vi.mocked(api).mockResolvedValue({...familyPayload,capabilities:{manage_family:false,manage_invites:false}});render(<Family/>);expect(await screen.findByText(/Somente o proprietário/)).toBeTruthy();expect(screen.queryByRole('button',{name:'Renomear família'})).toBeNull();expect(screen.queryByRole('button',{name:'Gerar convite'})).toBeNull()})
+ it('renames with versioned idempotent mutation and refreshes data',async()=>{vi.mocked(api).mockResolvedValue(familyPayload);const mutate=vi.fn().mockResolvedValue({id:'family',name:'Casa Nova',version:2});vi.mocked(createOperation).mockReturnValue(mutate);render(<Family/>);await screen.findByText('Família Silva');fireEvent.click(screen.getByRole('button',{name:'Renomear família'}));fireEvent.change(screen.getByLabelText('Nome da família'),{target:{value:'Casa Nova'}});fireEvent.click(screen.getByRole('button',{name:'Salvar nome'}));await waitFor(()=>expect(createOperation).toHaveBeenCalledWith('/family','PATCH',{name:'Casa Nova',version:1}));expect(mutate).toHaveBeenCalledTimes(1)})
+})
+
+describe('PROFILE-01 modal',()=>{
+ it('shows login email as read only with an explanation',async()=>{vi.mocked(api).mockResolvedValue({...ownerAuth.user,email_mutable:false});render(<ProfileModal open onClose={()=>{}} onUpdated={()=>{}}/>);const email=await screen.findByLabelText('Email de acesso');expect((email as HTMLInputElement).readOnly).toBe(true);expect(screen.getByText(/email usado para entrar/)).toBeTruthy()})
+ it('updates the authenticated display name and reports it to the shell',async()=>{vi.mocked(api).mockResolvedValue({...ownerAuth.user,email_mutable:false});const mutate=vi.fn().mockResolvedValue({...ownerAuth.user,name:'Douglas Silva',version:2,email_mutable:false});vi.mocked(createOperation).mockReturnValue(mutate);const updated=vi.fn();render(<ProfileModal open onClose={()=>{}} onUpdated={updated}/>);await screen.findByLabelText('Nome');fireEvent.change(screen.getByLabelText('Nome'),{target:{value:'Douglas Silva'}});fireEvent.click(screen.getByRole('button',{name:'Salvar perfil'}));await waitFor(()=>expect(updated).toHaveBeenCalledWith(expect.objectContaining({name:'Douglas Silva',version:2})))})
+ it('propagates the renamed identity to topbar and member selectors',async()=>{vi.mocked(api).mockResolvedValue({...ownerAuth.user,email_mutable:false});vi.mocked(createOperation).mockReturnValue(vi.fn().mockResolvedValue({...ownerAuth.user,name:'Douglas Silva',version:2,email_mutable:false}));function Harness(){const [auth,setAuth]=React.useState(ownerAuth),[open,setOpen]=React.useState(false);return <><Topbar page="Resumo" auth={auth} onProfile={()=>setOpen(true)} onLogout={()=>{}}/><select aria-label="Responsável">{auth.members.map(member=><option key={member.id}>{member.name}</option>)}</select><ProfileModal open={open} onClose={()=>setOpen(false)} onUpdated={profile=>setAuth(current=>({...current,user:{...current.user,...profile},members:current.members.map(member=>member.id===profile.id?{...member,name:profile.name}:member)}))}/></>};render(<Harness/>);fireEvent.click(screen.getByRole('button',{name:/Abrir perfil de Douglas/}));await screen.findByLabelText('Nome');fireEvent.change(screen.getByLabelText('Nome'),{target:{value:'Douglas Silva'}});fireEvent.click(screen.getByRole('button',{name:'Salvar perfil'}));await waitFor(()=>expect(screen.getByRole('button',{name:'Abrir perfil de Douglas Silva'})).toBeTruthy());expect(screen.getByRole('option',{name:'Douglas Silva'})).toBeTruthy()})
+ it('preserves the typed name and shows an actionable API error',async()=>{vi.mocked(api).mockResolvedValue({...ownerAuth.user,email_mutable:false});vi.mocked(createOperation).mockReturnValue(vi.fn().mockRejectedValue(new Error('Nome inválido.')));render(<ProfileModal open onClose={()=>{}} onUpdated={()=>{}}/>);await screen.findByLabelText('Nome');fireEvent.change(screen.getByLabelText('Nome'),{target:{value:'Nome digitado'}});fireEvent.click(screen.getByRole('button',{name:'Salvar perfil'}));expect((await screen.findByRole('alert')).textContent).toContain('Nome inválido');expect((screen.getByLabelText('Nome') as HTMLInputElement).value).toBe('Nome digitado')})
+})

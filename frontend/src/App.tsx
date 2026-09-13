@@ -1,26 +1,27 @@
+import {useEffect,useState} from 'react'
+import {Plus} from 'lucide-react'
 import {RecurrenceManager} from './pages/RecurrenceManager'
 import {Planning} from './pages/Planning'
 import {Commitment} from './pages/Commitment'
 import {Cards} from './pages/Cards'
+import {Family} from './pages/Family'
 import {AddExpense} from './components/AddExpense'
-import {today} from './api/client'
+import {ProfileModal} from './components/ProfileModal'
+import {today,api,createOperation} from './api/client'
 import {Overview} from './pages/Overview'
-import {useEffect,useState} from 'react'
-import {Layers,LogOut,LayoutDashboard,CreditCard,CalendarRange,List,Plus,ChevronRight} from 'lucide-react'
-import {api,createOperation} from './api/client'
 import {Login} from './pages/Login'
-export type Person={id:string,name:string}
-export type Auth={user:Person,members:Person[],family_id:string}
+import {AppShell} from './layout/AppShell'
+import type {Auth} from './layout/types'
+export type {Person,Auth} from './layout/types'
 export function App(){
  const [selectedMonth,setSelectedMonth]=useState('default')
  const [detail,setDetail]=useState<string|null>(null)
  const [adding,setAdding]=useState(false),[revision,setRevision]=useState(0)
- const [auth,setAuth]=useState<Auth|null>(null),[loading,setLoading]=useState(true),[page,setPage]=useState('Resumo')
+ const [auth,setAuth]=useState<Auth|null>(null),[loading,setLoading]=useState(true),[page,setPage]=useState('Resumo'),[profileOpen,setProfileOpen]=useState(false)
  const load=()=>api<Auth>('/auth/me').then(setAuth).catch(()=>setAuth(null)).finally(()=>setLoading(false))
  useEffect(()=>{load();const expired=()=>setAuth(null);window.addEventListener('session-expired',expired);return()=>window.removeEventListener('session-expired',expired)},[])
  if(loading)return <div className="loading">Preparando seu espaço…</div>
  if(!auth)return <Login onLogin={load}/>
- const navigation=[['Resumo',LayoutDashboard],['Lançamentos',List],['Cartões',CreditCard],['Planejamento',CalendarRange]] as const
- return <div className="app-layout"><aside className="sidebar"><div className="brand"><Layers/><span>entre nós<span className="brand-dot">.</span></span></div><div className="family-pill"><div className="avatar">{auth.user.name[0]}</div><div><strong>Minha família</strong><small>Um espaço de vocês</small></div><ChevronRight size={16}/></div><span className="nav-caption">SEU PLANEJAMENTO</span><nav>{navigation.map(([name,Icon])=><button key={name} className={page===name?'active':''} onClick={()=>setPage(name)}><Icon size={19}/><span>{name}</span></button>)}</nav><div className="sidebar-foot"><p>Pequenos cuidados.<br/><strong>Grandes planos.</strong></p></div></aside><div className="workspace"><header className="topbar"><span>Finanças da família <ChevronRight size={14}/> <strong>{page}</strong></span><div className="profile"><button onClick={async()=>{await createOperation('/auth/logout','POST')();setAuth(null)}}><LogOut size={17}/>Sair</button><span>{auth.user.name}</span><div className="avatar">{auth.user.name[0]}</div></div></header><main className="main-content"><div className="page-heading"><div><span className="eyebrow">TUDO EM SEU LUGAR</span><h1>{page}</h1></div><button className="primary" onClick={()=>setAdding(true)}><Plus size={18}/>Adicionar despesa</button></div>{page==='Cartões'?<Cards auth={auth}/>:page==='Planejamento'?<Planning refresh={revision} auth={auth} onChanged={()=>setRevision(x=>x+1)}/>:<><Overview key={page} view={page==='Resumo'?'summary':'entries'} onShowEntries={()=>setPage('Lançamentos')} auth={auth} onOpen={setDetail} refresh={revision} selectedMonth={selectedMonth} onMonthChange={setSelectedMonth}/>{page==='Lançamentos'&&selectedMonth!=='default'&&<RecurrenceManager month={selectedMonth} refresh={revision} onChanged={()=>setRevision(x=>x+1)}/>}</>}</main></div>{detail&&<Commitment id={detail} onClose={()=>setDetail(null)} onChanged={()=>setRevision(x=>x+1)}/>}
-{adding&&<AddExpense auth={auth} month={selectedMonth==='default'?today().slice(0,7):selectedMonth} onClose={()=>setAdding(false)} onSaved={()=>setRevision(x=>x+1)}/>}</div>
+ const logout=async()=>{await createOperation('/auth/logout','POST')();setAuth(null)}
+ return <AppShell page={page} auth={auth} onSelect={setPage} onProfile={()=>setProfileOpen(true)} onLogout={()=>void logout()}><main className="main-content"><div className="page-heading"><div><span className="eyebrow">TUDO EM SEU LUGAR</span><h1>{page}</h1></div>{page!=='Família'&&<button className="primary" onClick={()=>setAdding(true)}><Plus size={18}/>Adicionar despesa</button>}</div>{page==='Família'?<Family/>:page==='Cartões'?<Cards auth={auth}/>:page==='Planejamento'?<Planning refresh={revision} auth={auth} onChanged={()=>setRevision(x=>x+1)}/>:<><Overview key={page} view={page==='Resumo'?'summary':'entries'} onShowEntries={()=>setPage('Lançamentos')} auth={auth} onOpen={setDetail} refresh={revision} selectedMonth={selectedMonth} onMonthChange={setSelectedMonth}/>{page==='Lançamentos'&&selectedMonth!=='default'&&<RecurrenceManager month={selectedMonth} refresh={revision} onChanged={()=>setRevision(x=>x+1)}/>}</>}</main>{detail&&<Commitment id={detail} onClose={()=>setDetail(null)} onChanged={()=>setRevision(x=>x+1)}/>} {adding&&<AddExpense auth={auth} month={selectedMonth==='default'?today().slice(0,7):selectedMonth} onClose={()=>setAdding(false)} onSaved={()=>setRevision(x=>x+1)}/>}<ProfileModal open={profileOpen} onClose={()=>setProfileOpen(false)} onUpdated={profile=>setAuth(current=>current?{...current,user:{...current.user,...profile},members:current.members.map(member=>member.id===profile.id?{...member,name:profile.name}:member)}:current)}/></AppShell>
 }
