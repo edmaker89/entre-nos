@@ -15,6 +15,8 @@ test('ADV-01 plan and cancel an original installment through UI',async({page})=>
  await page.getByRole('button',{name:'Planejar antecipação',exact:true}).click()
  await expect(page.getByText('Planejada',{exact:true})).toBeVisible()
  await page.getByRole('button',{name:'Cancelar antecipação',exact:true}).click()
+ await expect(page.getByRole('dialog',{name:'Cancelar antecipação?'})).toBeVisible()
+ await page.getByRole('button',{name:'Confirmar cancelamento',exact:true}).click()
  await expect(page.getByText('Cancelada',{exact:true})).toBeVisible()
  await expect(page.getByTestId('pending-count')).toHaveText('2')
 })
