@@ -135,7 +135,12 @@ def me(request: Request, db: DB, family: FamilyID):
         .where(Membership.family_id == family)
     ).all()
     return {
-        "user": {"id": request.state.user.id, "name": request.state.user.name},
+        "user": {
+            "id": request.state.user.id,
+            "name": request.state.user.name,
+            "email": request.state.user.email,
+            "version": request.state.user.version,
+        },
         "family_id": family,
         "members": [{"id": u.id, "name": u.name} for u in members],
     }
