@@ -9,6 +9,7 @@ from app.db.models import (
     Commitment,
     Installment,
     InstallmentResponsibilityShare,
+    Share,
     Advance,
     AdvanceItem,
     Card,
@@ -18,7 +19,7 @@ from app.db.models import (
 )
 from app.db.unit_of_work import check_version
 from app.domain.cycles import month_start, add_months
-from app.domain.money import MAX_CENTS
+from app.domain.money import MAX_CENTS, allocate
 from app.domain.responsibility import allocate_aggregate_split, responsibility_preview_hash
 from app.errors import AppError
 
@@ -31,6 +32,7 @@ class Shift(BaseModel):
 
 
 class Edit(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
     version: int = Field(ge=1)
     description: str = Field(min_length=1, max_length=200)
 
@@ -71,6 +73,10 @@ class FullEditInput(BaseModel):
     count: int = Field(ge=1, le=120)
     first_month: date
     shares: list[ShareInput] = Field(min_length=1, max_length=20)
+
+
+class FullEditApply(FullEditInput):
+    preview_hash: str = Field(min_length=64, max_length=64, pattern=r"^[0-9a-f]{64}$")
 
 
 def responsibility_preview_data(db, family, id, body):
@@ -391,6 +397,106 @@ def edit_preview(id: str, body: FullEditInput, db: DB, family: FamilyID):
     return edit_preview_data(db, family, id, body)
 
 
+def rebuild_unpaid_commitment(db, family, row, body, preview_data):
+    old_parts = db.scalars(
+        select(Installment)
+        .where(Installment.commitment_id == row.id, Installment.deleted_at.is_(None))
+        .order_by(Installment.number)
+    ).all()
+    if any(part.paid_at for part in old_parts):
+        raise AppError("paid_fields_locked", "Há pagamentos. Reabra-os antes de recalcular.")
+    plan_ids = [plan["id"] for plan in preview_data["planned_advances"]]
+    if plan_ids:
+        for plan in db.scalars(select(Advance).where(Advance.id.in_(plan_ids))):
+            plan.state = "cancelled"
+            plan.version += 1
+        db.execute(sql_delete(AdvanceItem).where(AdvanceItem.advance_id.in_(plan_ids)))
+    old_ids = [part.id for part in old_parts]
+    for part in old_parts:
+        if part.cycle_id:
+            cycle = db.get(Cycle, part.cycle_id)
+            if cycle and not cycle.paid_at:
+                cycle.confirmed = False
+                cycle.version += 1
+        reopen_month(db, family, part.month)
+    db.execute(
+        sql_delete(InstallmentResponsibilityShare).where(
+            InstallmentResponsibilityShare.installment_id.in_(old_ids)
+        )
+    )
+    db.execute(sql_delete(Installment).where(Installment.id.in_(old_ids)))
+    db.execute(sql_delete(Share).where(Share.commitment_id == row.id))
+
+    row.description = body.description.strip()
+    row.category = body.category
+    row.buyer_id = body.buyer_id
+    row.card_id = body.card_id
+    row.purchased_at = body.purchased_at
+    row.total_cents = body.total_cents
+    row.original_count = body.count
+    row.kind = "purchase" if body.card_id else ("financing" if row.imported else "expense")
+    for position, share in enumerate(body.shares):
+        db.add(
+            Share(
+                family_id=family,
+                commitment_id=row.id,
+                user_id=share.user_id,
+                weight=share.weight,
+                position=position,
+            )
+        )
+    card = get_row(db, Card, body.card_id) if body.card_id else None
+    new_parts = []
+    for part in preview_data["after"]["installments"]:
+        month = date.fromisoformat(part["month"])
+        cycle = ensure_cycle(db, family, card, month) if card else None
+        due = cycle.due_date if cycle else date.fromisoformat(part["due_date"])
+        installment = Installment(
+            family_id=family,
+            commitment_id=row.id,
+            number=part["number"],
+            original_cents=part["amount_cents"],
+            amount_cents=part["amount_cents"],
+            original_month=month,
+            month=month,
+            original_due=due,
+            due_date=due,
+            original_cycle_id=cycle.id if cycle else None,
+            cycle_id=cycle.id if cycle else None,
+            needs_review=part["needs_review"],
+            manually_assigned=True,
+        )
+        db.add(installment)
+        new_parts.append(installment)
+        if cycle:
+            cycle.confirmed = False
+            cycle.version += 1
+        reopen_month(db, family, month)
+    db.flush()
+    for installment in new_parts:
+        weights = allocate(installment.amount_cents, [share.weight for share in body.shares])
+        for position, (share, weight) in enumerate(
+            zip(body.shares, weights, strict=True)
+        ):
+            if weight:
+                db.add(
+                    InstallmentResponsibilityShare(
+                        family_id=family,
+                        installment_id=installment.id,
+                        user_id=share.user_id,
+                        weight=weight,
+                        position=position,
+                    )
+                )
+    db.flush()
+
+
+def changed_edit_fields(preview_data):
+    before = preview_data["before"]["commitment"]
+    after = preview_data["after"]["commitment"]
+    return [field for field in after if before.get(field) != after[field]]
+
+
 def editable(db, id):
     c = get_row(db, Commitment, id)
     parts = db.scalars(
@@ -452,13 +558,48 @@ def shift(id: str, body: Shift, request: Request, db: DB, family: FamilyID):
 
 
 @router.patch("/{id}")
-def edit(id: str, body: Edit, request: Request, db: DB, family: FamilyID):
+def edit(
+    id: str,
+    body: FullEditApply | Edit,
+    request: Request,
+    db: DB,
+    family: FamilyID,
+):
     def action():
-        c, parts = editable(db, id)
-        check_version(c, body.version)
-        if not body.description.strip():
-            raise AppError("validation", "Descrição obrigatória.", 422)
-        c.description = body.description.strip()
+        c = db.scalar(
+            select(Commitment)
+            .where(Commitment.id == id, Commitment.deleted_at.is_(None))
+            .with_for_update()
+        )
+        if c is None:
+            raise AppError("not_found", "Registro não encontrado.", 404)
+        if isinstance(body, Edit):
+            check_version(c, body.version)
+            c.description = body.description.strip()
+            fields = ["description"]
+        else:
+            preview_data = edit_preview_data(db, family, id, body)
+            if preview_data["preview_hash"] != body.preview_hash:
+                raise AppError(
+                    "version_conflict",
+                    "A prévia não representa mais o lançamento. Recarregue.",
+                )
+            check_version(c, body.version)
+            fields = changed_edit_fields(preview_data)
+            if preview_data["has_payments"]:
+                c.description = body.description.strip()
+                c.category = body.category
+            else:
+                rebuild_unpaid_commitment(db, family, c, body, preview_data)
+        db.add(
+            Audit(
+                family_id=family,
+                actor_id=request.state.user.id,
+                operation="edit_commitment",
+                entity_id=c.id,
+                details={"fields": fields},
+            )
+        )
         db.flush()
         return details(db, c)
 

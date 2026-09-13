@@ -29,14 +29,14 @@ def test_invoice_payment_and_reopening(client):
     assert after["installments"][0]["month"] == "2026-10-01"
     assert after["installments"][0]["paid_at"] == "2026-11-05"
     assert after["pending_count"] == 0
-    assert (
-        client.patch(
-            f"/api/v1/commitments/{c['id']}",
-            json={"version": after["version"], "description": "Changed"},
-            headers={"Idempotency-Key": str(uuid4())},
-        ).status_code
-        == 409
+    edited = client.patch(
+        f"/api/v1/commitments/{c['id']}",
+        json={"version": after["version"], "description": "Changed"},
+        headers={"Idempotency-Key": str(uuid4())},
     )
+    assert edited.status_code == 200
+    assert edited.json()["description"] == "Changed"
+    assert edited.json()["installments"][0]["paid_at"] == "2026-11-05"
     r = client.post(
         f"/api/v1/invoices/{cycle['id']}/reopen",
         json={"version": r.json()["version"]},

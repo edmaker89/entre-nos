@@ -392,20 +392,26 @@ def test_card_advance_amounts_shares_payment_and_reopen(client, amount, parts):
     }
     current = get(client, f"/commitments/{c['id']}")
     assert current["pending_count"] == 0
+    description_edit = write(
+        client,
+        f"/commitments/{c['id']}",
+        {"version": current["version"], "description": "Changed"},
+        "patch",
+    )
+    assert description_edit.status_code == 200
+    assert description_edit.json()["description"] == "Changed"
+    assert all(part["paid_at"] == "2026-10-05" for part in description_edit.json()["installments"])
+    current = get(client, f"/commitments/{c['id']}")
     for payload in [
-        {"description": "Changed"},
         {"description": "Changed", "total_cents": 1},
         {"description": "Changed", "shares": []},
     ]:
-        assert (
-            write(
-                client,
-                f"/commitments/{c['id']}",
-                {"version": current["version"], **payload},
-                "patch",
-            ).status_code
-            == 409
-        )
+        assert write(
+            client,
+            f"/commitments/{c['id']}",
+            {"version": current["version"], **payload},
+            "patch",
+        ).status_code == 422
     assert (
         client.delete(
             f"/api/v1/commitments/{c['id']}?version={current['version']}&confirm=true",
