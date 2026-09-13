@@ -53,11 +53,11 @@
 ## Handoff
 
 - **Feature**: gestao-e-experiencia-v2 — `.specs/features/gestao-e-experiencia-v2/`
-- **Phase / Task**: Fases 1–2 concluídas; próxima tarefa T14 da Fase 3.
-- **Completed**: T1–T13 em commits atômicos. A Fase 2 entregou snapshots de parcelas/ocorrências, prévia e aplicação transacional de transferência, cronograma reutilizável e edição completa segura nos commits `6ffc008`, `d219837`, `23c957c`, `46a1587`, `67afc8e` e `90df1d5`.
-- **Verification**: gate transversal Full Backend com 161 testes, Ruff/compile/import e Alembic check; zero falhas/skips. Gate frontend da Fase 1 permanece com 37 testes unitários e build TypeScript/Vite.
-- **Database safety**: somente PostgreSQL efêmero `expense-flow-phase2-test` na porta 55433 foi usado. O banco local com dados reais na porta 55432 e o Compose 8089 não foram alterados. Backup validado: `backups/before-gestao-experiencia-v2-20260912-144607.dump`.
-- **Next step**: executar T14 — modal de transferência — e depois T15–T19 em ordem.
+- **Phase / Task**: Fases 1–3 concluídas; próxima tarefa T20 da Fase 4.
+- **Completed**: T1–T19 em commits atômicos. A Fase 3 entregou transferência e edição completas, detalhe financeiro, pagamentos, fechamento mensal, recorrências e formulários padronizados nos commits `375a17e`, `f7382bf`, `8653df2`, `d25286d`, `c274742` e `c392d7f`.
+- **Verification**: Quick Frontend cresceu de 45 para 76 testes durante T14–T18. O gate final Full Frontend passou com 86/86 unitários, build TypeScript/Vite e 30/30 E2E; zero falhas/skips, zero diálogos nativos e quatro viewports sem overflow.
+- **Database safety**: somente PostgreSQL efêmero `expense-flow-phase3-e2e` na porta 55433 foi usado nos E2E. O banco local com dados reais na porta 55432 e o Compose 8089 não foram alterados. Backup validado permanece em `backups/before-gestao-experiencia-v2-20260912-144607.dump`.
+- **Next step**: executar T20 — leitura familiar e autorização owner/member — e depois T21–T26 em ordem.
 - **Blockers**: nenhum.
 - **Uncommitted files**: apenas mudanças preexistentes do usuário fora desta feature.
 - **Branch**: `codex/gestao-experiencia-v2`.

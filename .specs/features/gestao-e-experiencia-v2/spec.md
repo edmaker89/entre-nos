@@ -1,6 +1,6 @@
 # Gestão familiar, edição, perfil, recuperação e cartões — especificação
 
-**Status:** Em implementação — spec, Design, Tasks e execução por subagentes aprovados  
+**Status:** Em implementação — Fases 1–3 concluídas; próxima fase: gestão familiar, perfil e convites
 **Data:** 2026-09-12  
 **Complexidade:** complexa; somente Specify nesta etapa. Design, Tasks e Execute dependem da aprovação deste documento.
 

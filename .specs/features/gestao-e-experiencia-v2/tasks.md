@@ -7,7 +7,7 @@ Implementar estas tarefas com a skill `tlc-spec-driven`: ativá-la por nome e se
 Se a skill não puder ser ativada, interromper a execução e informar o usuário.
 
 **Design:** `.specs/features/gestao-e-experiencia-v2/design.md`  
-**Status:** In Progress — Fases 1–2 (T1–T13) concluídas; próxima tarefa T14
+**Status:** In Progress — Fases 1–3 (T1–T19) concluídas; próxima tarefa T20
 **Total:** 36 tarefas em 6 fases
 
 ---
@@ -293,6 +293,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T14: Criar modal de transferência de responsabilidade
 
+**Status:** ✅ Concluída — `375a17e`
+
 **What:** Implementar atalho 100%, divisão avançada, prévia e confirmação com preservação de conflito/inputs.  
 **Where:** `frontend/src/components/commitments/TransferResponsibilityModal.tsx` e teste  
 **Depends on:** T13  
@@ -305,6 +307,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 **Commit:** `feat(web): add responsibility transfer modal`
 
 ### T15: Criar modal de edição completa
+
+**Status:** ✅ Concluída — `f7382bf`
 
 **What:** Reutilizar campos do cadastro, exibir bloqueios por pagamento e antes/depois do cronograma.  
 **Where:** `frontend/src/components/commitments/EditCommitmentModal.tsx` e teste  
@@ -319,6 +323,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T16: Migrar ações do detalhe do compromisso
 
+**Status:** ✅ Concluída — `8653df2`
+
 **What:** Compor detalhe, competência, antecipação/pagamento e exclusão com os novos modais, removendo prompts desse fluxo.  
 **Where:** `frontend/src/pages/Commitment.tsx`, componentes de ação e testes  
 **Depends on:** T15  
@@ -331,6 +337,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 **Commit:** `refactor(web): compose commitment actions with modals`
 
 ### T17: Migrar pagamentos e fechamento do resumo
+
+**Status:** ✅ Concluída — `d25286d`
 
 **What:** Substituir data/confirm de pagamento de parcela/fatura e avanço de mês por modais compostos.  
 **Where:** `frontend/src/pages/Overview.tsx`, componentes de pagamento/confirmação e testes  
@@ -345,6 +353,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T18: Migrar ações de recorrências
 
+**Status:** ✅ Concluída — `c274742`
+
 **What:** Criar modal de valor, encerramento e exclusão de recorrência e integrá-los ao gerenciador.  
 **Where:** `frontend/src/pages/RecurrenceManager.tsx`, componentes de recorrência e testes  
 **Depends on:** T17  
@@ -357,6 +367,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 **Commit:** `refactor(web): replace recurrence native dialogs`
 
 ### T19: Migrar formulários existentes e zerar diálogos nativos
+
+**Status:** ✅ Concluída — `c392d7f`
 
 **What:** Converter AddExpense/CommitmentForm/ScheduledExpenseForm e estruturas diretas restantes ao primitive; criar gate de regressão.  
 **Where:** `frontend/src/components/`, estilos, testes existentes  
