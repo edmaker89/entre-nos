@@ -15,7 +15,7 @@ def test_provision_and_reset():
     family, user = provision("Casa", "Douglas", email, "strong-password")
     with Session(engine) as s, s.begin():
         assert s.get(User, user).email == email
-        assert s.get(Membership, (family, user)) is not None
+        assert s.get(Membership, (family, user)).role == "owner"
         s.add(LoginSession(user_id=user, token_hash=str(uuid4()), csrf_hash="csrf"))
     with pytest.raises(ValueError, match="cadastrado"):
         provision("Casa", "Douglas", email, "strong-password")
@@ -30,3 +30,5 @@ def test_provision_and_reset():
     second_family, second_user = provision("Casa", "Vanessa", other, "strong-password", family)
     assert second_family == family
     assert second_user != user
+    with Session(engine) as s:
+        assert s.get(Membership, (family, second_user)).role == "member"

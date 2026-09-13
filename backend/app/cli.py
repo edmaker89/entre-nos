@@ -22,7 +22,13 @@ def provision(family_name, name, email, password, family_id=None):
         user = User(name=name, email=email, password_hash=passwords.hash(password))
         db.add(user)
         db.flush()
-        db.add(Membership(user_id=user.id, family_id=family.id))
+        db.add(
+            Membership(
+                user_id=user.id,
+                family_id=family.id,
+                role="owner" if family_id is None else "member",
+            )
+        )
         return family.id, user.id
 
 
