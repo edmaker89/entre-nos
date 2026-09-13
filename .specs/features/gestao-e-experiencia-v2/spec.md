@@ -1,6 +1,6 @@
 # Gestão familiar, edição, perfil, recuperação e cartões — especificação
 
-**Status:** Em implementação — Fases 1–3 concluídas; próxima fase: gestão familiar, perfil e convites
+**Status:** Em implementação — Fases 1–4 concluídas; próxima fase: recuperação de senha
 **Data:** 2026-09-12  
 **Complexidade:** complexa; somente Specify nesta etapa. Design, Tasks e Execute dependem da aprovação deste documento.
 
@@ -237,9 +237,9 @@ As decisões D01–D12 foram aprovadas pelo usuário em 2026-09-12; D11 recebeu 
 | EDIT-01 | P1 | Backend T1/T2/T6/T8–T11 concluído; interface T14/T16/T19 pendente |
 | EDIT-02 | P1 | Backend T6/T8/T12/T13 concluído; interface T15/T16/T19 pendente |
 | MODAL-01 | P1 | Em implementação; primitive T7 concluído |
-| FAMILY-01 | P1 | Em implementação; esquema/autenticação T1/T3 concluídos |
-| INVITE-01 | P1 | Em implementação; fundação T1/T3/T4 concluída |
-| PROFILE-01 | P1 | Em implementação; esquema/autenticação T1/T3 concluídos |
+| FAMILY-01 | P1 | Concluído em T1/T3/T20/T21/T25; backend, autorização e interface verificados |
+| INVITE-01 | P1 | Concluído em T1/T3/T4/T22/T23/T26; hash-only, uso único, concorrência e compartilhamento verificados |
+| PROFILE-01 | P1 | Concluído em T1/T3/T24/T25; perfil próprio e propagação visual verificados |
 | AUTH-RESET-01 | P1 | Em implementação; fundação T1/T4/T5 concluída |
 | CARD-UX-01 | P1 | Planejada; começa na Fase 6 |
 | CARD-CATALOG-01 | P1 | Em implementação; esquema T1 concluído |

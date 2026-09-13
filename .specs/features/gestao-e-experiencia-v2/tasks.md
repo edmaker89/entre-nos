@@ -7,7 +7,7 @@ Implementar estas tarefas com a skill `tlc-spec-driven`: ativá-la por nome e se
 Se a skill não puder ser ativada, interromper a execução e informar o usuário.
 
 **Design:** `.specs/features/gestao-e-experiencia-v2/design.md`  
-**Status:** In Progress — Fases 1–3 (T1–T19) concluídas; próxima tarefa T20
+**Status:** In Progress — Fases 1–4 (T1–T26) concluídas; próxima tarefa T27
 **Total:** 36 tarefas em 6 fases
 
 ---
@@ -385,6 +385,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T20: Criar leitura familiar e autorização owner/member
 
+**Status:** ✅ Concluída — `de91404`
+
 **What:** Implementar `require_owner` e GET familiar com papéis, integrantes, código e convites sem segredo.  
 **Where:** `backend/app/api/family.py`, `permissions.py`, `main.py`, testes  
 **Depends on:** T19  
@@ -397,6 +399,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 **Commit:** `feat(family): expose isolated family management view`
 
 ### T21: Implementar nome e rotação do código familiar
+
+**Status:** ✅ Concluída — `f4f7fd8`
 
 **What:** Criar mutações owner-only, versionadas/idempotentes, com código curto único e auditoria.  
 **Where:** `backend/app/api/family.py`, testes  
@@ -411,6 +415,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T22: Implementar criação, listagem e revogação de convites
 
+**Status:** ✅ Concluída — `4755380`
+
 **What:** Criar endpoints owner-only com hash, 7 dias, limite, resposta one-time do link e revogação.  
 **Where:** `backend/app/api/family_invites.py`, testes  
 **Depends on:** T21  
@@ -423,6 +429,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 **Commit:** `feat(family): create and revoke secure invites`
 
 ### T23: Implementar inspeção e consumo público do convite
+
+**Status:** ✅ Concluída — `27ef237`
 
 **What:** Criar POST inspect/accept/register com token limpo, sessão para cadastro e consumo concorrente único.  
 **Where:** `backend/app/api/invite_auth.py`, helpers de sessão, testes  
@@ -437,6 +445,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T24: Implementar perfil próprio
 
+**Status:** ✅ Concluída — `349aab8`
+
 **What:** Criar GET/PATCH de nome próprio, versionado, com email somente leitura e atualização de referências por identidade.  
 **Where:** `backend/app/api/profile.py`, `auth.py`, testes  
 **Depends on:** T23  
@@ -450,6 +460,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T25: Criar área Família e perfil na navegação
 
+**Status:** ✅ Concluída — `dcec908`
+
 **What:** Extrair AppShell/Sidebar/Topbar, tornar família e nome acionáveis e implementar telas/modais conforme capacidades.  
 **Where:** `frontend/src/layout/`, `frontend/src/pages/Family.tsx`, `ProfileModal.tsx`, `App.tsx`, testes  
 **Depends on:** T24  
@@ -462,6 +474,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 **Commit:** `feat(web): add family management and profile entry points`
 
 ### T26: Criar compartilhamento e landing de convite
+
+**Status:** ✅ Concluída — `777c09b`
 
 **What:** Implementar modal one-time, Web Share/WhatsApp/cópia e landing para login/cadastro com limpeza imediata da URL.  
 **Where:** `frontend/src/components/family/`, `frontend/src/pages/InviteLanding.tsx`, `App.tsx`, testes  
