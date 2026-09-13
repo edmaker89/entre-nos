@@ -7,7 +7,7 @@ Implementar estas tarefas com a skill `tlc-spec-driven`: ativá-la por nome e se
 Se a skill não puder ser ativada, interromper a execução e informar o usuário.
 
 **Design:** `.specs/features/gestao-e-experiencia-v2/design.md`  
-**Status:** In Progress — Fases 1–4 (T1–T26) concluídas; próxima tarefa T27
+**Status:** In Progress — Fases 1–5 (T1–T29) concluídas; próxima tarefa T30
 **Total:** 36 tarefas em 6 fases
 
 ---
@@ -492,6 +492,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T27: Implementar solicitação e entrega de reset
 
+**Status:** ✅ Concluída — `0f47691`
+
 **What:** Criar rota genérica, token hash-only, limites, tarefa pós-commit e envio Resend com status seguro.  
 **Where:** `backend/app/api/password_reset.py`, email/config, testes  
 **Depends on:** T26  
@@ -505,6 +507,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T28: Implementar validação e conclusão do reset
 
+**Status:** ✅ Concluída — `35ab596`
+
 **What:** Criar validate/complete com lock, 15 minutos, uso único, senha diferente e revogação atômica de sessões/tokens.  
 **Where:** `backend/app/api/password_reset.py`, testes de integração/concorrência  
 **Depends on:** T27  
@@ -517,6 +521,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 **Commit:** `feat(auth): complete one-time password reset`
 
 ### T29: Criar telas de esquecimento e redefinição
+
+**Status:** ✅ Concluída — `0f69537`
 
 **What:** Adicionar link no login, solicitação genérica e página de nova senha que limpa token/referrer e volta ao login.  
 **Where:** `frontend/src/pages/ForgotPassword.tsx`, `ResetPassword.tsx`, `Login.tsx`, `App.tsx`, testes  
