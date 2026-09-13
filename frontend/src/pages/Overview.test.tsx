@@ -1,9 +1,9 @@
 import React from 'react'
-import {render,screen,waitFor,cleanup} from '@testing-library/react'
+import {render,screen,waitFor,cleanup,fireEvent} from '@testing-library/react'
 import {afterEach,it,expect,vi} from 'vitest'
 import {Overview} from './Overview'
-vi.mock('../api/client',async()=>{const actual=await vi.importActual('../api/client');return {...actual,api:vi.fn()}})
-import {api} from '../api/client'
+vi.mock('../api/client',async()=>{const actual=await vi.importActual('../api/client');return {...actual,api:vi.fn(),createOperation:vi.fn()}})
+import {api,createOperation} from '../api/client'
 afterEach(()=>{cleanup();vi.clearAllMocks()})
 it('MONTH-01 renders exact expected paid and remaining totals',async()=>{
  vi.mocked(api).mockResolvedValue({month:'2026-10',current_month:'2026-10',current_remaining:5000,items:[],people:[],family_total:15000,totals:{expected:15000,paid:10000,remaining:5000}})
@@ -12,3 +12,14 @@ it('MONTH-01 renders exact expected paid and remaining totals',async()=>{
  expect(screen.getByTestId('paid').textContent).toContain('100,00')
  expect(screen.getByTestId('remaining').textContent).toContain('50,00')
 })
+const auth={user:{id:'d',name:'Douglas'},members:[{id:'d',name:'Douglas'}],family_id:'f'}
+const item={id:'i1',version:1,kind:'installment',description:'Mercado',display_cents:1000,paid_at:null,shares:[{name:'Douglas',amount_cents:1000}],number:1,original_count:1}
+const monthData={month:'2026-10',current_month:'2026-10',current_remaining:1000,items:[item],people:[],family_total:1000,totals:{expected:1000,paid:0,remaining:1000}}
+function setup(data:any=monthData){vi.mocked(api).mockResolvedValue(data);return render(<Overview auth={auth} onOpen={()=>{}} refresh={0}/>)}
+it('collects a payment date and announces the selected item scope',async()=>{setup();fireEvent.click((await screen.findAllByRole('button',{name:'Pagar Mercado'}))[0]);expect(screen.getByText('Somente “Mercado” será marcado como pago.')).toBeTruthy();expect((screen.getByLabelText('Data do pagamento') as HTMLInputElement).value).toMatch(/^\d{4}-\d{2}-\d{2}$/)})
+it('confirms a whole invoice only after loading its current version',async()=>{const invoice={...item,cycle_id:'cy',card_id:'card'};vi.mocked(api).mockImplementation(async(path)=>path.includes('/cycles')?[{id:'cy',version:8}]:{...monthData,items:[invoice]});render(<Overview auth={auth} onOpen={()=>{}} refresh={0}/>);fireEvent.click((await screen.findAllByRole('button',{name:'Pagar Mercado'}))[0]);expect(await screen.findByText('A fatura inteira será marcada como paga.')).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'Confirmar pagamento'}));expect(createOperation).toHaveBeenCalledWith('/invoices/cy/pay','POST',expect.objectContaining({version:8}))})
+it('uses an internal confirmation to reopen a paid obligation',async()=>{vi.mocked(api).mockResolvedValue({...monthData,items:[{...item,paid_at:'2026-10-10'}]});render(<Overview auth={auth} onOpen={()=>{}} refresh={0} view="entries"/>);fireEvent.click((await screen.findAllByRole('button',{name:'Reabrir Mercado'}))[0]);expect(screen.getByText('O pagamento de “Mercado” será desfeito.')).toBeTruthy();expect(screen.getByRole('button',{name:'Confirmar reabertura'})).toBeTruthy()})
+it('confirms month closing and offers the next month only after success',async()=>{vi.mocked(createOperation).mockReturnValue(vi.fn().mockResolvedValue({}));setup();fireEvent.click(await screen.findByRole('button',{name:/Tudo deste mês foi pago/}));expect(screen.getByText(/sinalizar outubro de 2026 como quitado/)).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'Confirmar fechamento'}));expect(await screen.findByText('Mês sinalizado como quitado.')).toBeTruthy();expect(screen.getByRole('button',{name:'Abrir próximo mês'})).toBeTruthy()})
+it('keeps the payment modal and date when the operation fails',async()=>{vi.mocked(createOperation).mockReturnValue(vi.fn().mockRejectedValue(new Error('Falha ao pagar')));setup();fireEvent.click((await screen.findAllByRole('button',{name:'Pagar Mercado'}))[0]);fireEvent.change(screen.getByLabelText('Data do pagamento'),{target:{value:'2026-10-20'}});fireEvent.click(screen.getByRole('button',{name:'Confirmar pagamento'}));expect((await screen.findByRole('alert')).textContent).toContain('Falha ao pagar');expect((screen.getByLabelText('Data do pagamento') as HTMLInputElement).value).toBe('2026-10-20')})
+it('disables confirmation while a payment is running',async()=>{let finish:(value:unknown)=>void=()=>{};vi.mocked(createOperation).mockReturnValue(vi.fn(()=>new Promise(resolve=>{finish=resolve})));setup();fireEvent.click((await screen.findAllByRole('button',{name:'Pagar Mercado'}))[0]);fireEvent.click(screen.getByRole('button',{name:'Confirmar pagamento'}));expect((screen.getByRole('button',{name:'Salvando…'}) as HTMLButtonElement).disabled).toBe(true);finish({})})
+it('does not invoke native dialogs for payment or month closing',async()=>{const prompt=vi.spyOn(window,'prompt'),confirm=vi.spyOn(window,'confirm'),alert=vi.spyOn(window,'alert');setup();fireEvent.click((await screen.findAllByRole('button',{name:'Pagar Mercado'}))[0]);expect(prompt).not.toHaveBeenCalled();expect(confirm).not.toHaveBeenCalled();expect(alert).not.toHaveBeenCalled()})
