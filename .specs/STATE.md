@@ -53,11 +53,11 @@
 ## Handoff
 
 - **Feature**: gestao-e-experiencia-v2 — `.specs/features/gestao-e-experiencia-v2/`
-- **Phase / Task**: Fases 1–5 concluídas; próxima tarefa T30 da Fase 6.
-- **Completed**: T1–T29 em commits atômicos. A Fase 5 entregou solicitação genérica, token hash-only de 15 minutos, limites por email/origem, Resend atrás de adaptador, conclusão concorrente de uso único, revogação atômica de sessões/tokens e telas seguras nos commits `0f47691`, `35ab596` e `0f69537`.
-- **Verification**: gate transversal passou com 232/232 testes backend, Ruff/compile/import, Alembic check, 119/119 testes frontend, build TypeScript/Vite e 33/33 E2E; zero falhas/skips. Concorrência real de reset confirmou exatamente um vencedor, e nenhum teste enviou email real.
-- **Database safety**: somente PostgreSQL efêmero `expense-flow-phase5-db` na porta 65434 foi usado e removido ao final. O banco local com dados reais na porta 55432, o volume `expense-flow-dev-data` e o Compose 8089 não foram alterados. Backup validado permanece em `backups/before-gestao-experiencia-v2-20260912-144607.dump`.
-- **Next step**: executar T30–T36 da Fase 6 — catálogo e experiência visual de cartões, prontidão operacional e aceitação integrada.
+- **Phase / Task**: Execute concluído; verificação independente final PASS.
+- **Completed**: T1–T36 em commits atômicos; 9/9 requisitos e 60/60 critérios ancorados em `.specs/features/gestao-e-experiencia-v2/validation.md`.
+- **Verification**: 263 backend, 169 frontend unitários, build e 42 E2E passaram sem skips; Compose smoke passou; discrimination sensor P0 matou 9/9 mutantes.
+- **Database safety**: somente PostgreSQL/Compose efêmeros em 65436/8001/5174 foram usados e removidos. O banco local com dados reais na porta 55432, `expense-flow-dev-data` e o backup `backups/before-gestao-experiencia-v2-20260912-144607.dump` não foram alterados.
+- **Next step**: UAT visual humano opcional e preparação do deploy HTTPS; nenhuma tarefa funcional pendente no escopo aprovado.
 - **Blockers**: nenhum.
 - **Uncommitted files**: apenas mudanças preexistentes do usuário fora desta feature.
 - **Branch**: `codex/gestao-experiencia-v2`.

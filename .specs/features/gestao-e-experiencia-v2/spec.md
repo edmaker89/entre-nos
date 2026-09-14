@@ -1,8 +1,8 @@
 # Gestão familiar, edição, perfil, recuperação e cartões — especificação
 
-**Status:** Implementação concluída — aguardando verificação independente
+**Status:** ✅ Verificada independentemente em 2026-09-14 — pronta no escopo especificado
 **Data:** 2026-09-12  
-**Complexidade:** complexa; somente Specify nesta etapa. Design, Tasks e Execute dependem da aprovação deste documento.
+**Complexidade:** complexa; Specify, Design, Tasks e Execute concluídos.
 
 ## Problema
 
@@ -234,15 +234,15 @@ As decisões D01–D12 foram aprovadas pelo usuário em 2026-09-12; D11 recebeu 
 
 | Requisito | Prioridade | Estado |
 | --- | --- | --- |
-| EDIT-01 | P1 | Backend T1/T2/T6/T8–T11 concluído; interface T14/T16/T19 pendente |
-| EDIT-02 | P1 | Backend T6/T8/T12/T13 concluído; interface T15/T16/T19 pendente |
-| MODAL-01 | P1 | Em implementação; primitive T7 concluído |
-| FAMILY-01 | P1 | Concluído em T1/T3/T20/T21/T25; backend, autorização e interface verificados |
-| INVITE-01 | P1 | Concluído em T1/T3/T4/T22/T23/T26; hash-only, uso único, concorrência e compartilhamento verificados |
-| PROFILE-01 | P1 | Concluído em T1/T3/T24/T25; perfil próprio e propagação visual verificados |
-| AUTH-RESET-01 | P1 | Concluído em T1/T4/T5/T27–T29; hash-only, 15 minutos, uso único, concorrência, revogação e interface verificados |
-| CARD-UX-01 | P1 | Planejada; começa na Fase 6 |
-| CARD-CATALOG-01 | P1 | Em implementação; esquema T1 concluído |
+| EDIT-01 | P1 | ✅ Verificado — backend, interface, histórico pago, transação e concorrência |
+| EDIT-02 | P1 | ✅ Verificado — edição total/parcial, prévia, modal, auditoria e rollback |
+| MODAL-01 | P1 | ✅ Verificado — primitive compartilhado, foco, teclado, busy e responsividade |
+| FAMILY-01 | P1 | ✅ Verificado — gestão, owner/member, migração e isolamento |
+| INVITE-01 | P1 | ✅ Verificado — hash-only, uso único, concorrência e compartilhamento |
+| PROFILE-01 | P1 | ✅ Verificado — perfil próprio, email somente leitura e propagação |
+| AUTH-RESET-01 | P1 | ✅ Verificado — enumeração, TTL, uso único, concorrência, revogação e URL segura |
+| CARD-UX-01 | P1 | ✅ Verificado — proporção, grade, conteúdo e quatro viewports |
+| CARD-CATALOG-01 | P1 | ✅ Verificado — catálogo com Neon, custom, bandeiras, tema e dados seguros |
 
 **Cobertura:** 9 requisitos, todos mapeados; 0 sem tratamento.
 

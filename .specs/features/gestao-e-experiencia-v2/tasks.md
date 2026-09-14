@@ -7,7 +7,7 @@ Implementar estas tarefas com a skill `tlc-spec-driven`: ativá-la por nome e se
 Se a skill não puder ser ativada, interromper a execução e informar o usuário.
 
 **Design:** `.specs/features/gestao-e-experiencia-v2/design.md`  
-**Status:** In Progress — Fases 1–5 (T1–T29) concluídas; próxima tarefa T30
+**Status:** ✅ Concluída e verificada independentemente — T1–T36
 **Total:** 36 tarefas em 6 fases
 
 ---
