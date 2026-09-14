@@ -19,10 +19,13 @@ from app.api.auth import router as auth_router
 import logging
 from uuid import uuid4
 
+from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from app.config import settings
+from app.db.unit_of_work import engine
 
 app = FastAPI(title="Expense Flow", version="0.1.0")
 logger = logging.getLogger("expense")
@@ -68,6 +71,13 @@ def handle_validation(request: Request, exc: RequestValidationError):
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/ready")
+def readiness():
+    with engine.connect() as connection:
+        connection.execute(text("SELECT 1"))
+    return {"status": "ready", "database": "ok", "email_provider": settings.email_provider}
 
 
 @app.middleware("http")

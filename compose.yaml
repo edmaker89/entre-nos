@@ -37,12 +37,20 @@ services:
       DATABASE_URL: postgresql+psycopg://expense_runtime:${APP_DB_PASSWORD}@db:5432/expense
       APP_ORIGIN: ${APP_ORIGIN:?Configure APP_ORIGIN}
       SECURE_COOKIES: ${SECURE_COOKIES:-true}
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-memory}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_FROM: ${EMAIL_FROM:-Entre Nós <noreply@localhost>}
+      EMAIL_TIMEOUT_SECONDS: ${EMAIL_TIMEOUT_SECONDS:-5}
+      PUBLIC_APP_URL: ${PUBLIC_APP_URL:-http://localhost:8089}
+      PASSWORD_RESET_TTL_SECONDS: ${PASSWORD_RESET_TTL_SECONDS:-900}
+      FAMILY_INVITE_TTL_SECONDS: ${FAMILY_INVITE_TTL_SECONDS:-604800}
+      AUTH_RATE_LIMIT_SECRET: ${AUTH_RATE_LIMIT_SECRET:-local-development-rate-limit-secret}
     depends_on:
       migrate:
         condition: service_completed_successfully
     mem_limit: 512m
     healthcheck:
-      test: [CMD, python, -c, 'import urllib.request; urllib.request.urlopen("http://localhost:8000/health")']
+      test: [CMD, python, -c, 'import urllib.request; urllib.request.urlopen("http://localhost:8000/ready")']
       interval: 10s
       timeout: 3s
       retries: 10

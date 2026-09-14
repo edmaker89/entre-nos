@@ -70,6 +70,12 @@ docker compose run --rm migrate python -m app.cli create-user --email outro-emai
 
 A API conecta como `expense_runtime`, sem superuser/BYPASSRLS. Migrações e CLI usam `expense_owner`. O init do PostgreSQL cria o papel de runtime somente no primeiro volume vazio; trocar a variável de senha depois não altera automaticamente usuários de um volume existente.
 
+### Email, links públicos e prontidão
+
+Use `EMAIL_PROVIDER=resend` com `RESEND_API_KEY`, `EMAIL_FROM` pertencente ao domínio verificado e `PUBLIC_APP_URL` no domínio HTTPS publicado. A chave do Resend fica somente no `.env` ignorado; `.env.example` contém apenas placeholder. Configure `AUTH_RATE_LIMIT_SECRET` com um segredo aleatório diferente da chave do provedor. Em testes, use `EMAIL_PROVIDER=memory`: o smoke consulta `/ready`, valida banco/configuração e não envia email real.
+
+`/health` é liveness mínima. `/ready` confirma conexão com o PostgreSQL e configuração carregada; o healthcheck do Compose usa readiness antes de liberar o serviço web. URL HTTP é aceita apenas em `localhost`, `127.0.0.1` ou `::1`; qualquer outro host exige HTTPS.
+
 Atualizações: faça backup, carregue as novas imagens, execute `docker compose run --rm migrate alembic upgrade head` e só então recrie API/web. Não executar downgrade destrutivo automaticamente. Sessões têm limite absoluto de 7 dias e expiram após 24 horas sem atividade; logout revoga a sessão e redefinição de senha revoga todas as sessões do usuário.
 
 ## Migrações

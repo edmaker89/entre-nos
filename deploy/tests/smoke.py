@@ -33,6 +33,10 @@ def main():
         with client.open(req,timeout=10) as response:
             return json.load(response)
     assert request('/health')=={'status':'ok'}
+    readiness=request('/ready')
+    assert readiness['status']=='ready'
+    assert readiness['database']=='ok'
+    assert readiness['email_provider']=='memory'
     try:
         request('/api/v1/auth/me')
         raise AssertionError('Anonymous session accepted')
@@ -69,7 +73,7 @@ def main():
         except (urllib.error.URLError,TimeoutError):
             time.sleep(1)
     assert request('/api/v1/commitments/'+saved['id'])['installments'][0]['amount_cents']==10000
-    print('PASS: private ports, health, login, runtime role, persistence and backup restoration.')
+    print('PASS: private ports, readiness without email, login, runtime role, persistence and backup restoration.')
 
 if __name__=='__main__':
     main()
