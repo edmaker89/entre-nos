@@ -4,7 +4,8 @@ import {login} from './helpers'
 async function seed(page:Page,path:string,body:any){return page.evaluate(async({path,body})=>{
  const me=await(await fetch('/api/v1/auth/me')).json()
  const csrf=await(await fetch('/api/v1/auth/csrf')).json()
- const response=await fetch('/api/v1'+path,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf.csrf_token,'Idempotency-Key':crypto.randomUUID()},body:JSON.stringify({...body,buyer_id:me.user.id,holder_id:me.user.id,shares:[{user_id:me.user.id,weight:body.total_cents??1}]})})
+ const identity=path.startsWith('/commitments')?{buyer_id:me.user.id,shares:[{user_id:me.user.id,weight:body.total_cents??1}]}:path==='/cards'?{holder_id:me.user.id}:{}
+ const response=await fetch('/api/v1'+path,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf.csrf_token,'Idempotency-Key':crypto.randomUUID()},body:JSON.stringify({...body,...identity})})
  if(!response.ok)throw new Error(await response.text())
  return response.json()
 },{path,body})}
@@ -36,7 +37,8 @@ test('DATA response lost after card commit retries without duplication',async({p
  await page.getByRole('button',{name:'Cartões',exact:true}).click()
  await page.getByRole('button',{name:'Novo cartão',exact:true}).click()
  await page.getByLabel('Nome do cartão').fill('Cartão sem duplicação')
- await page.getByLabel('Instituição',{exact:true}).fill('Banco')
+ await page.getByRole('button',{name:'Outra instituição',exact:true}).click()
+ await page.getByLabel('Nome da instituição',{exact:true}).fill('Banco')
  let lost=false;const keys:string[]=[]
  await page.route('**/api/v1/cards',async route=>{
   if(route.request().method()!=='POST')return route.continue()
