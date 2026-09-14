@@ -539,6 +539,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T30: Estruturar API e catálogo de instituições do cartão
 
+**Status:** ✅ Concluída — `62535de`
+
 **What:** Validar chaves/redes/custom/últimos quatro, expor catálogo e manter compatibilidade dos cartões migrados.  
 **Where:** `backend/app/domain/card_catalog.py`, `backend/app/api/cards.py`, testes  
 **Depends on:** T29  
@@ -551,6 +553,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 **Commit:** `feat(cards): structure institution and network catalog`
 
 ### T31: Criar temas acessíveis das instituições
+
+**Status:** ✅ Concluída — `c19b256`
 
 **What:** Definir catálogo visual/tokens por chave e testes automatizados de contraste/estabilidade.  
 **Where:** `frontend/src/domain/cardInstitutions.ts` e teste  
@@ -565,6 +569,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T32: Criar CardFormModal pesquisável
 
+**Status:** ✅ Concluída — `4248ff7`
+
 **What:** Implementar cadastro/edição com instituição pesquisável, Outra, bandeira, final e prévia de tema.  
 **Where:** `frontend/src/components/cards/CardFormModal.tsx` e teste  
 **Depends on:** T31  
@@ -577,6 +583,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 **Commit:** `feat(cards): add searchable card form modal`
 
 ### T33: Criar cartão visual proporcional e grade compacta
+
+**Status:** ✅ Concluída — `a64222c`
 
 **What:** Implementar `PaymentCard` e `CardsGrid` com proporção ID-1, conteúdo compacto e ações discretas.  
 **Where:** `frontend/src/components/cards/PaymentCard.tsx`, `CardsGrid.tsx`, estilos e testes  
@@ -591,6 +599,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T34: Integrar cartões e substituir diálogos de fatura
 
+**Status:** ✅ Concluída — `665a0ff`
+
 **What:** Refatorar Cards para usar grade/form e modais de fechamento/pagamento, removendo prompts remanescentes.  
 **Where:** `frontend/src/pages/Cards.tsx`, componentes de ciclo e testes  
 **Depends on:** T33  
@@ -604,6 +614,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 
 ### T35: Configurar prontidão, Compose e documentação operacional
 
+**Status:** ✅ Concluída — `3c93c39`
+
 **What:** Propagar env de email/link/rate limit, criar `/ready`, atualizar Compose/README/example e smoke sem expor chave.  
 **Where:** `.env.example`, `compose.yaml`, `backend/app/config.py`, `main.py`, `deploy/tests/smoke.py`, `README.md`  
 **Depends on:** T34  
@@ -616,6 +628,8 @@ T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36
 **Commit:** `chore(deploy): configure email and public link readiness`
 
 ### T36: Fechar aceitação integrada dos nove requisitos
+
+**Status:** ✅ Concluída — `f8180b5`
 
 **What:** Adicionar cenários Playwright finais, atualizar documentação de rastreabilidade e executar a suíte completa em estado limpo.  
 **Where:** `frontend/e2e/experience-v2.spec.ts`, artefatos `.specs`  

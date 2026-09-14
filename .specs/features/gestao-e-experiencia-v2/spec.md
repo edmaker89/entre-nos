@@ -1,6 +1,6 @@
 # Gestão familiar, edição, perfil, recuperação e cartões — especificação
 
-**Status:** Em implementação — Fases 1–5 concluídas; próxima fase: cartões e operação
+**Status:** Implementação concluída — aguardando verificação independente
 **Data:** 2026-09-12  
 **Complexidade:** complexa; somente Specify nesta etapa. Design, Tasks e Execute dependem da aprovação deste documento.
 
